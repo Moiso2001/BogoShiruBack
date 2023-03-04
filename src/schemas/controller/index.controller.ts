@@ -1,0 +1,1 @@
+export {spotContactInfoValidator} from "./spot.controller"
