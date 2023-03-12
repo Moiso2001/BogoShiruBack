@@ -13,11 +13,10 @@ import mongoConfig from './config/mongo.config';
       load: [mongoConfig]
     }), 
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('mongo.uri')
-      }),
-      inject: [ConfigService],
+      })
     })
   ],
 
