@@ -1,14 +1,15 @@
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import mongoConfig from './config/mongo.config';
 import { AppService } from './app.service';
 import { Module } from '@nestjs/common';
+
 import { CategorieModule } from './services/categorie/categorie.module';
 import { PlanModule } from './services/plan/plan.module';
 import { SpotModule } from './services/spot/spot.module';
-import { TagModule } from './services/tag/tag.module';
 import { UserModule } from './services/user/user.module';
-import mongoConfig from './config/mongo.config';
+import { TagModule } from './services/tag/tag.module';
 
 @Module({
   imports: [
@@ -26,10 +27,12 @@ import mongoConfig from './config/mongo.config';
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('mongo.uri')
       })
-    }), CategorieModule, PlanModule, SpotModule, TagModule, UserModule,
-
-    
-
+    }), 
+    CategorieModule, 
+    PlanModule, 
+    SpotModule, 
+    TagModule, 
+    UserModule,
   ],
 
   controllers: [AppController],
