@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { spotContactInfoValidator } from "./controller/spot.controller";
 
 
-const spotSchema = new Schema({
+export const spotSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name is missing']
