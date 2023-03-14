@@ -1,2 +1,2 @@
 export {spotContactInfo} from "./spot";
-export {Categorie} from "./categorie"
+export {Categorie} from "./categorie";
