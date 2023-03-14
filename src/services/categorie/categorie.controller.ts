@@ -1,20 +1,29 @@
 import { Controller, Get, Put, Post, Delete, Param, Body } from '@nestjs/common';
-import { Categorie } from 'src/types';
+import { Categorie, errorMessage } from 'src/types';
+import { CategorieService } from './categorie.service';
 
 @Controller('categorie')
 export class CategorieController {
 
-    @Get()
-    getCategories(){
+    constructor(private readonly categorieService: CategorieService){}
 
+    @Get()
+    getCategories(): Promise<Categorie[] | errorMessage>{
+        return this.categorieService.getAll()
     }
 
-    @Get(':id')
-    getCategorie(@Param('id') id: String){}
+    @Get('id/:id')
+    getCategorieById(@Param('id') id: String){
+        return this.categorieService.getCategorieById(id)
+    }
 
+    @Get('name/:name')
+    getCategorieByName(@Param('name') name: String){
+        return this.categorieService.getCategorieByName(name)
+    }
     @Post()
     createCategorie(@Body() newCategorie: Categorie){
-
+        
     }
 
     @Put(':id')
@@ -24,6 +33,6 @@ export class CategorieController {
 
     @Delete(':id')
     deleteCategorie(@Param('id') id: String){
-        
+
     }
 }
