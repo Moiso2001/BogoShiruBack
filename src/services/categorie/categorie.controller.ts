@@ -2,6 +2,7 @@ import { Controller, Get, Put, Post, Delete, Param, Body } from '@nestjs/common'
 import { Categorie, errorMessage } from 'src/types';
 import { CategorieService } from './categorie.service';
 
+
 @Controller('categorie')
 export class CategorieController {
 
