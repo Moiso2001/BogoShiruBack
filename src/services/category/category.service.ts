@@ -9,6 +9,7 @@ export class CategoryService {
 
     constructor(@InjectModel('category') private readonly categoryModel: Model<Category>){};
 
+    /* We devided the services between type requests, initially the getAll which brings all categorie in DB */
     async getAll(): Promise<Category[] | Message> {
         try {
             const categories = await this.categoryModel.find()
@@ -23,6 +24,7 @@ export class CategoryService {
         }
     };
 
+    /* Looking by ID */
     async getCategoryById(id: string): Promise<Category | Message>{
         try {
             const category = await this.categoryModel.findById(id);
@@ -38,6 +40,7 @@ export class CategoryService {
         }
     };
 
+    /* Looking by name */
     async getCategoryByName(name: string): Promise<Category | Message>{
         try {
             const category = await this.categoryModel.findOne({name});
@@ -52,6 +55,7 @@ export class CategoryService {
         }
     };
 
+    /* Used to post a category */
     async createCategory(category: CategoryDto): Promise<Message>{
         try {
             if(!category.name){
@@ -67,6 +71,7 @@ export class CategoryService {
         }
     };
 
+    /* Well... any further to say update and delete... just that :) */
     async updateCategory(id: string, category: CategoryDto): Promise<Category | Message>{
         try {
             const updatedCategory = await this.categoryModel.findByIdAndUpdate(id, category, {new: true})
