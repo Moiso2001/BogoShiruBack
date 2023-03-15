@@ -22,4 +22,4 @@ export const planSchema = new Schema({
         min: [1, 'Min number is 1'],
         max: [5, 'Max number is 5'],
     }
-})
+},{ strict: 'throw' })

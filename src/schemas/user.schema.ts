@@ -23,4 +23,4 @@ export const userSchema = new Schema({
         type: String,
         required: true
     }
-})
+}, { strict: 'throw' })
