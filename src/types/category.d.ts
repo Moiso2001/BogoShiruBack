@@ -1,4 +1,4 @@
-export type Categorie = {
+export type Category = {
     name: String,
     picture?: String
 }

@@ -1,4 +1,4 @@
-export type errorMessage = {
+export type Message = {
     message: String
     error?: Error
 }

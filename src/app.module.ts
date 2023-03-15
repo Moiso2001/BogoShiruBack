@@ -5,7 +5,7 @@ import mongoConfig from './config/mongo.config';
 import { AppService } from './app.service';
 import { Module } from '@nestjs/common';
 
-import { CategorieModule } from './services/categorie/categorie.module';
+import { CategoryModule } from './services/category/category.module';
 import { PlanModule } from './services/plan/plan.module';
 import { SpotModule } from './services/spot/spot.module';
 import { UserModule } from './services/user/user.module';
@@ -28,7 +28,7 @@ import { TagModule } from './services/tag/tag.module';
         uri: configService.get<string>('mongo.uri')
       })
     }), 
-    CategorieModule, 
+    CategoryModule, 
     PlanModule, 
     SpotModule, 
     TagModule, 

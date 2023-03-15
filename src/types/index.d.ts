@@ -1,3 +1,3 @@
 export {spotContactInfo} from "./spot";
-export {Categorie} from "./categorie";
-export {errorMessage} from "./errormsg"
+export {Category} from "./category";
+export {Message} from "./message"

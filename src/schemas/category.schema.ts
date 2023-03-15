@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 
-export const categorieSchema = new Schema({
+export const categorySchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name is missing']
