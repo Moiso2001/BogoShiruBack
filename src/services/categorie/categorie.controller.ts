@@ -16,16 +16,17 @@ export class CategorieController {
     @Get('id/:id')
     getCategorieById(@Param('id') id: String){
         return this.categorieService.getCategorieById(id)
-    }
+    };
 
     @Get('name/:name')
     getCategorieByName(@Param('name') name: String){
         return this.categorieService.getCategorieByName(name)
-    }
+    };
+
     @Post()
     createCategorie(@Body() newCategorie: Categorie){
-
-    }
+        return this.categorieService.createCategorie(newCategorie)
+    };
 
     @Put(':id')
     modifyCategorie(@Param('id') id: String, @Body() categorie: Categorie){

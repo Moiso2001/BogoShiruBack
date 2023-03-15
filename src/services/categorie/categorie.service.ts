@@ -50,4 +50,19 @@ export class CategorieService {
             return {message: 'An unexpected error appears', error}
         }
     }
+
+    async createCategorie(categorie: Categorie){
+        try {
+            if(!categorie.name){
+                return {message: 'Name of category is missing'}
+            }
+
+            const newCategorie = new this.categorieModel(categorie)
+            await newCategorie.save()
+
+            return {message: `Categorie with name ${categorie.name} was created under id: ${newCategorie._id}`}
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    }
 }

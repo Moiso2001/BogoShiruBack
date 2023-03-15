@@ -8,4 +8,4 @@ export const tagSchema = new Schema({
     picture: {
         type: String
     }
-})
+}, { strict: 'throw' })

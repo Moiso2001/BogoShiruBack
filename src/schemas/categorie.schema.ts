@@ -8,4 +8,4 @@ export const categorieSchema = new Schema({
     picture: {
         type: String
     }
-})
+}, { strict: 'throw' })
