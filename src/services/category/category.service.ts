@@ -21,7 +21,7 @@ export class CategoryService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async getCategoryById(id: string): Promise<Category | Message>{
         try {
@@ -36,7 +36,7 @@ export class CategoryService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async getCategoryByName(name: string): Promise<Category | Message>{
         try {
@@ -50,7 +50,7 @@ export class CategoryService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async createCategory(category: CategoryDto): Promise<Message>{
         try {
@@ -65,12 +65,28 @@ export class CategoryService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
-    async updateCategory(id: string, category: CategoryDto){
+    async updateCategory(id: string, category: CategoryDto): Promise<Category | Message>{
         try {
+            const updatedCategory = await this.categoryModel.findByIdAndUpdate(id, category, {new: true})
+            return updatedCategory
         } catch (error) {
-            
+            return {message: 'An unexpected error appears', error}
+        }
+    };
+
+    async deleteCategory(id: string): Promise<Message>{
+        try {
+            const deletedCategory = await this.categoryModel.findByIdAndDelete(id).exec();
+
+            if(!deletedCategory){
+                return {message: `The category under id: ${id} does not exist`}
+            }
+
+            return {message: `The category under the id: ${deletedCategory._id} was deleted correctly`}
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
         }
     }
 }

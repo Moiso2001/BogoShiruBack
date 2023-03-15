@@ -31,11 +31,11 @@ export class CategoryController {
 
     @Put(':id')
     modifyCategorie(@Param('id') id: string, @Body() categorie: CategoryDto){
-
+        return this.CategoryService.updateCategory(id, categorie);
     }
 
     @Delete(':id')
-    deleteCategorie(@Param('id') id: string){
-
+    deleteCategorie(@Param('id') id: string): Promise<Message>{
+        return this.CategoryService.deleteCategory(id)
     }
 }
