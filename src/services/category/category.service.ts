@@ -18,7 +18,7 @@ export class CategoryService {
                 return categories
             }
 
-            return {message: 'There is no categories yet available'}
+            return {message: 'There are no categories available'}
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
@@ -29,12 +29,11 @@ export class CategoryService {
         try {
             const category = await this.categoryModel.findById(id);
 
-            console.log(category)
             if(category){
                 return category
             }
 
-            return {message: `Category with id ${id} not exists in our DB`}
+            return {message: `Category with id ${id} not exists in DB`}
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
@@ -75,6 +74,11 @@ export class CategoryService {
     async updateCategory(id: string, category: CategoryDto): Promise<Category | Message>{
         try {
             const updatedCategory = await this.categoryModel.findByIdAndUpdate(id, category, {new: true})
+            
+            if(!updatedCategory){
+                return {message: `Categorie under id: ${id} doesn't exist`}
+            }
+            
             return updatedCategory
         } catch (error) {
             return {message: 'An unexpected error appears', error}
