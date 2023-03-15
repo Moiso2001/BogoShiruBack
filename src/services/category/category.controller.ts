@@ -33,7 +33,7 @@ export class CategoryController {
         return this.CategoryService.createCategory(newCategorie)
     };
 
-    /* Put request, must receive an ID by Param and the categorie by Body, this categorie means the property to be updated with his value */
+    /* Put request, must receive an ID by Param and the categorie by Body, this categorie has the property to be updated with his value */
     @Put(':id')
     modifyCategory(@Param('id') id: string, @Body() categorie: CategoryDto): Promise<Category | Message>{
         return this.CategoryService.updateCategory(id, categorie);

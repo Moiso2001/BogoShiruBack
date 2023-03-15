@@ -10,6 +10,7 @@ export class TagService {
 
     constructor(@InjectModel('tag') private readonly tagModel: Model<Tag>){};
 
+    /* We devided the services between type requests, initially the getAll which brings all tags in DB */
     async getAll(): Promise<Tag[] | Message>{
         try {
             const tags = await this.tagModel.find()
