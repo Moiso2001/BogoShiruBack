@@ -3,7 +3,7 @@ import { Message, Tag } from 'src/types';
 import { TagDto } from 'src/types/dto/tag.dto';
 import { TagService } from './tag.service';
 
-@Controller('tag')
+@Controller('tags')
 export class TagController {
 
     constructor(private readonly TagService: TagService){}
