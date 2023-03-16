@@ -1,8 +1,8 @@
+import { CategoryDto } from 'src/types/dto/category.dto';
 import { InjectModel } from '@nestjs/mongoose';
+import { Category, Message } from 'src/types';
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Category, Message } from 'src/types';
-import { CategoryDto } from 'src/types/dto/category.dto';
 
 @Injectable()
 export class CategoryService {

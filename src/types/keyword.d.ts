@@ -1,3 +1,3 @@
-export type KeywordType = {
+export type Keyword = {
     name: string
 }
