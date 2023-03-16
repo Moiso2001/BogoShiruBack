@@ -1,9 +1,6 @@
-export type spotContactInfo = {
-    phone?: string,
-    email?: string
-}
+import { spotContactInfo } from "../spot"
 
-export type Spot = {
+export class SpotDto {
     name: string
     contact_info: spotContactInfo
     address: string

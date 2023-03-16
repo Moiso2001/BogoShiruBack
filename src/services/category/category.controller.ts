@@ -4,7 +4,7 @@ import { CategoryService } from './category.service';
 import { Category, Message } from 'src/types';
 
 
-@Controller('categorie')
+@Controller('categories')
 export class CategoryController {
 
     constructor(private readonly CategoryService: CategoryService){}

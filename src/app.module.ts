@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { Module } from '@nestjs/common';
 
 import { CategoryModule } from './services/category/category.module';
+import { KeywordModule } from './services/keyword/keyword.module';
 import { PlanModule } from './services/plan/plan.module';
 import { SpotModule } from './services/spot/spot.module';
 import { UserModule } from './services/user/user.module';
@@ -32,7 +33,8 @@ import { TagModule } from './services/tag/tag.module';
     PlanModule, 
     SpotModule, 
     TagModule, 
-    UserModule,
+    UserModule, 
+    KeywordModule,
   ],
 
   controllers: [AppController],
