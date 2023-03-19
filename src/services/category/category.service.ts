@@ -88,7 +88,22 @@ export class CategoryService {
             return {message: 'An unexpected error appears', error}
         }
     };
+    
+    async deleteCategory(id: string): Promise<Message>{
+        try {
+            const deletedCategory = await this.categoryModel.findByIdAndDelete(id).exec();
 
+            if(!deletedCategory){
+                return {message: `The category under id: ${id} does not exist`}
+            }
+
+            return {message: `The category under the id: ${deletedCategory._id} was deleted correctly`}
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    };
+
+    /* Keywords relation with Category */
     async addKeywords(idCategory: string, keywords: KeywordDto[]): Promise<Message | Category>{
         try {
             const categoryToUpdate = await this.categoryModel.findById(idCategory);
@@ -153,18 +168,4 @@ export class CategoryService {
             return {message: 'An unexpected error appears', error}
         }
     };
-
-    async deleteCategory(id: string): Promise<Message>{
-        try {
-            const deletedCategory = await this.categoryModel.findByIdAndDelete(id).exec();
-
-            if(!deletedCategory){
-                return {message: `The category under id: ${id} does not exist`}
-            }
-
-            return {message: `The category under the id: ${deletedCategory._id} was deleted correctly`}
-        } catch (error) {
-            return {message: 'An unexpected error appears', error}
-        }
-    }
 }
