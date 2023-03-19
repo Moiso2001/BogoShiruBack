@@ -37,6 +37,4 @@ export class KeywordController {
     deleteKeyword(@Param('id') id:string){
         return this.KeywordService.deleteKeyword(id)
     };
-}
-
-
+};
