@@ -50,6 +50,7 @@ export class CategoryController {
         return this.CategoryService.deleteCategory(id)
     };
 
+    /* Delete keyword on a category, this will ask for the category id and the name of the keyword */
     @Delete('keywords/:idCategory/:keywordName')
     deleteKeywordOnCategory(@Param('idCategory') idCategory: string, @Param('keywordName') keyword: string){
         return this.CategoryService.deleteKeyword(idCategory, keyword)

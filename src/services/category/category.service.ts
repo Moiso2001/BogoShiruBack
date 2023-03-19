@@ -130,16 +130,18 @@ export class CategoryService {
 
     async deleteKeyword(categoryId: string, keywordName: string) {
         try {
-          const keywordToDelete = await this.keywordModel.findOne({name: keywordName});
+          // Search keyword by name and validate it in case the keyword name does not exist.
+          const keywordToDelete = await this.keywordModel.findOne({name: keywordName.toLowerCase()});
 
           if(!keywordToDelete){
-            return {message: `Keyword with name ${keywordName} not found.`};
+            return {message: `Keyword with name ${keywordName.toLowerCase()} not found.`};
           }
 
+          // Search the category and pull the keyword provided before
           const categoryToUpdate = await this.categoryModel.findByIdAndUpdate(
             categoryId,
-            { $pull: { keywords: keywordToDelete._id } },
-            { new: true }
+            { $pull: { keywords: keywordToDelete._id } }, // Pull method will pull out the kategory by id from our Category.keyword array
+            { new: true } // Will assure categoryToUpdate will be the last category version
           );
       
           if (!categoryToUpdate) {
