@@ -99,7 +99,7 @@ export class CategoryService {
             }
 
             // Map the KeywordDto array to an array of keyword IDs
-            const keywordIds: Array<string | Types.ObjectId> = [];
+            const keywordIds: Array<Types.ObjectId> = [];
 
             for (const keyword of keywords) { 
             
