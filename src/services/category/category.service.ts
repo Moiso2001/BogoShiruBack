@@ -101,7 +101,6 @@ export class CategoryService {
             // Map the KeywordDto array to an array of keyword IDs
             const keywordIds: Array<string | Types.ObjectId> = [];
 
-        
             for (const keyword of keywords) { 
             
               // Search the keyword and if it does not exist we will create it
