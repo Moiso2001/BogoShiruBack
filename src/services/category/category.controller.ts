@@ -13,7 +13,7 @@ export class CategoryController {
     @Get()
     getCategories(): Promise<Category[] | Message>{
         return this.CategoryService.getAll()
-    }
+    };
 
     /* Searching just by ID */
     @Get('id/:id')
@@ -37,16 +37,22 @@ export class CategoryController {
     @Put(':id')
     modifyCategory(@Param('id') id: string, @Body() categorie: CategoryDto): Promise<Category | Message>{
         return this.CategoryService.updateCategory(id, categorie);
-    }
+    };
 
     @Put('keywords/:id')
-    addKeyword(@Param('id') idCategory: string, @Body() keywords: KeywordDto[]) {
+    addKeyword(@Param('id') idCategory: string, @Body() keywords: KeywordDto[]): Promise<Category | Message> {
         return this.CategoryService.addKeywords(idCategory, keywords);
-    }
+    };
 
     /* To delete a category is necessary just the ID any other parameter will throw an error*/
     @Delete(':id')
     deleteCategory(@Param('id') id: string): Promise<Message>{
         return this.CategoryService.deleteCategory(id)
-    }
+    };
+
+    /* Delete keyword on a category, this will ask for the category id and the name of the keyword */
+    @Delete('keywords/:idCategory/:keywordName')
+    deleteKeywordOnCategory(@Param('idCategory') idCategory: string, @Param('keywordName') keyword: string){
+        return this.CategoryService.deleteKeyword(idCategory, keyword)
+    };
 }

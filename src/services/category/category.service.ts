@@ -89,7 +89,7 @@ export class CategoryService {
         }
     };
 
-    async addKeywords(idCategory: string, keywords: KeywordDto[]){
+    async addKeywords(idCategory: string, keywords: KeywordDto[]): Promise<Message | Category>{
         try {
             const categoryToUpdate = await this.categoryModel.findById(idCategory);
 
@@ -98,7 +98,7 @@ export class CategoryService {
                 return{message: `Category with ID ${idCategory} not found.`}
             }
 
-            // Map the KeywordDto array to an array of keyword IDs
+            // Map the KeywordDto array to an ab rray of keyword IDs
             const keywordIds: Array<Types.ObjectId> = [];
 
             for (const keyword of keywords) { 
@@ -126,7 +126,33 @@ export class CategoryService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
+
+    async deleteKeyword(categoryId: string, keywordName: string) {
+        try {
+          // Search keyword by name and validate it in case the keyword name does not exist.
+          const keywordToDelete = await this.keywordModel.findOne({name: keywordName.toLowerCase()});
+
+          if(!keywordToDelete){
+            return {message: `Keyword with name ${keywordName.toLowerCase()} not found.`};
+          }
+
+          // Search the category and pull the keyword provided before
+          const categoryToUpdate = await this.categoryModel.findByIdAndUpdate(
+            categoryId,
+            { $pull: { keywords: keywordToDelete._id } }, // Pull method will pull out the kategory by id from our Category.keyword array
+            { new: true } // Will assure categoryToUpdate will be the last category version
+          );
+      
+          if (!categoryToUpdate) {
+            return {message: `Category with ID ${categoryId} not found.`};
+          }
+      
+            return categoryToUpdate;
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    };
 
     async deleteCategory(id: string): Promise<Message>{
         try {
