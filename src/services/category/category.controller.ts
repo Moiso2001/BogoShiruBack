@@ -1,5 +1,5 @@
 import { Controller, Get, Put, Post, Delete, Param, Body } from '@nestjs/common';
-import { CategoryDto } from 'src/types/dto/category.dto';
+import { CategoryDto, KeywordDto } from 'src/types/dto/index.dto';
 import { CategoryService } from './category.service';
 import { Category, Message } from 'src/types';
 
@@ -37,6 +37,11 @@ export class CategoryController {
     @Put(':id')
     modifyCategory(@Param('id') id: string, @Body() categorie: CategoryDto): Promise<Category | Message>{
         return this.CategoryService.updateCategory(id, categorie);
+    }
+
+    @Put('keywords/:id')
+    addKeyword(@Param('id') idCategory: string, @Body() keywords: KeywordDto[]) {
+        return this.CategoryService.addKeywords(idCategory, keywords);
     }
 
     /* To delete a category is necessary just the ID any other parameter will throw an error*/

@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export const categorySchema = new Schema({
     name: {
@@ -7,5 +7,8 @@ export const categorySchema = new Schema({
     },
     picture: {
         type: String
+    },
+    keywords: {
+        type: [mongoose.Types.ObjectId]
     }
 }, { strict: 'throw' })

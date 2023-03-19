@@ -1,13 +1,17 @@
 import { CategoryDto } from 'src/types/dto/category.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Category, Message } from 'src/types';
+import { Category, Keyword, Message } from 'src/types';
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { KeywordDto } from 'src/types/dto/keyword.dto';
 
 @Injectable()
 export class CategoryService {
 
-    constructor(@InjectModel('category') private readonly categoryModel: Model<Category>){};
+    constructor(
+        @InjectModel('category') private readonly categoryModel: Model<Category>,
+        @InjectModel('keyword') private readonly keywordModel: Model<Keyword>
+    ){};
 
     /* We devided the services between type requests, initially the getAll which brings all categorie in DB */
     async getAll(): Promise<Category[] | Message> {
@@ -84,6 +88,46 @@ export class CategoryService {
             return {message: 'An unexpected error appears', error}
         }
     };
+
+    async addKeywords(idCategory: string, keywords: KeywordDto[]){
+        try {
+            const categoryToUpdate = await this.categoryModel.findById(idCategory);
+
+            // Validate if idCategory exists
+            if(!categoryToUpdate){
+                return{message: `Category with ID ${idCategory} not found.`}
+            }
+
+            // Map the KeywordDto array to an array of keyword IDs
+            const keywordIds: Array<string | Types.ObjectId> = [];
+
+        
+            for (const keyword of keywords) { 
+            
+              // Search the keyword and if it does not exist we will create it
+              const result = await this.keywordModel.findOneAndUpdate(
+                { name: keyword.name.toLowerCase() }, // Case if the name already exists
+                { name: keyword.name.toLowerCase() }, // Case if the name doesn't exist and we create it here
+                { upsert: true, new: true }
+              );
+
+              // We validate if the keyword already exists in the category to avoid adding duplicates
+              if(categoryToUpdate.keywords.includes(result._id))continue;
+
+              keywordIds.push(result._id);
+            }
+        
+            // Update the category's keywords property with the new keyword IDs
+            categoryToUpdate.keywords = [...categoryToUpdate.keywords, ...keywordIds];
+        
+            // Save the updated category to the database
+            await categoryToUpdate.save();  
+            
+            return categoryToUpdate
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    }
 
     async deleteCategory(id: string): Promise<Message>{
         try {

@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export const tagSchema = new Schema({
     name: {
@@ -7,5 +7,8 @@ export const tagSchema = new Schema({
     },
     picture: {
         type: String
+    },
+    keyword: {
+        types: [mongoose.Types.ObjectId]
     }
 }, { strict: 'throw' })
