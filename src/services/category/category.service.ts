@@ -143,7 +143,7 @@ export class CategoryService {
         }
     };
 
-    async deleteKeyword(categoryId: string, keywordName: string) {
+    async deleteKeyword(categoryId: string, keywordName: string): Promise<Message | Category>{
         try {
           // Search keyword by name and validate it in case the keyword name does not exist.
           const keywordToDelete = await this.keywordModel.findOne({name: keywordName.toLowerCase()});
