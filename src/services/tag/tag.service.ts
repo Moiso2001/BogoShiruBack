@@ -157,8 +157,8 @@ export class TagService {
               // Search the tag and pull the keyword provided before
               const tagToUpdate = await this.tagModel.findByIdAndUpdate(
                 tagId,
-                { $pull: { keywords: keywordToDelete._id } }, // Pull method will pull out the kategory by id from our Category.keyword array
-                { new: true } // Will assure categoryToUpdate will be the last category version
+                { $pull: { keywords: keywordToDelete._id } }, // Pull method will pull out the keyword by id from our Tag.keyword array
+                { new: true } // Will assure tagToUpdate will be the last tag version
               );
           
               if (!tagToUpdate) {
