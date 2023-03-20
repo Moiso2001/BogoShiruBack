@@ -1,14 +1,18 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { Message, Tag } from 'src/types';
+import { Model, Types } from 'mongoose';
+import { Keyword, Message, Tag } from 'src/types';
 import { TagDto } from 'src/types/dto/tag.dto';
+import { KeywordDto } from 'src/types/dto/keyword.dto';
 
 
 @Injectable()
 export class TagService {
 
-    constructor(@InjectModel('tag') private readonly tagModel: Model<Tag>){};
+    constructor(
+        @InjectModel('tag') private readonly tagModel: Model<Tag>,
+        @InjectModel('keyword') private readonly keywordModel: Model<Keyword>
+    ){};
 
     /* We devided the services between type requests, initially the getAll which brings all tags in DB */
     async getAll(): Promise<Tag[] | Message>{
@@ -100,4 +104,70 @@ export class TagService {
             return {message: 'An unexpected error appears', error}
         }
     }
+
+    /* Keywords relation with Tag */
+    async addKeywords(idTag: string, keywords: KeywordDto[]){
+        try {
+            const tagToUpdate = await this.tagModel.findById(idTag);
+
+            // Validate if idTag exists
+            if(!tagToUpdate){
+                return{message: `Tag with ID ${idTag} not found.`}
+            }
+
+            // Map the KeywordDto array to an array of keyword IDs
+            const keywordIds: Array<Types.ObjectId> = [];
+
+            for (const keyword of keywords) { 
+            
+              // Search the keyword and if it does not exist we will create it
+              const result = await this.keywordModel.findOneAndUpdate(
+                { name: keyword.name.toLowerCase() }, // Case if the name already exists
+                { name: keyword.name.toLowerCase() }, // Case if the name doesn't exist and we create it here
+                { upsert: true, new: true }
+              );
+
+              // We validate if the keyword already exists in the tag to avoid adding duplicates
+              if(tagToUpdate.keywords.includes(result._id))continue;
+
+              keywordIds.push(result._id);
+            }
+        
+            // Update the tag's keywords property with the new keyword IDs
+            tagToUpdate.keywords = [...tagToUpdate.keywords, ...keywordIds];
+        
+            // Save the updated tag to the database
+            await tagToUpdate.save();  
+            
+            return tagToUpdate
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    };
+    
+    async deleteKeyword(tagId: string, keywordName: string) {   
+            try {
+              // Search keyword by name and validate it in case the keyword name does not exist.
+              const keywordToDelete = await this.keywordModel.findOne({name: keywordName.toLowerCase()});
+    
+              if(!keywordToDelete){
+                return {message: `Keyword with name ${keywordName.toLowerCase()} not found.`};
+              }
+    
+              // Search the tag and pull the keyword provided before
+              const tagToUpdate = await this.tagModel.findByIdAndUpdate(
+                tagId,
+                { $pull: { keywords: keywordToDelete._id } }, // Pull method will pull out the kategory by id from our Category.keyword array
+                { new: true } // Will assure categoryToUpdate will be the last category version
+              );
+          
+              if (!tagToUpdate) {
+                return {message: `Tag with ID ${tagId} not found.`};
+              }
+          
+                return tagToUpdate;
+            } catch (error) {
+                return {message: 'An unexpected error appears', error}
+            }
+    };
 }
