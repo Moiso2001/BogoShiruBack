@@ -106,7 +106,7 @@ export class TagService {
     }
 
     /* Keywords relation with Tag */
-    async addKeywords(idTag: string, keywords: KeywordDto[]): Promise<Message | Keyword>{
+    async addKeywords(idTag: string, keywords: KeywordDto[]){
         try {
             const tagToUpdate = await this.tagModel.findById(idTag);
 
@@ -136,7 +136,7 @@ export class TagService {
             // Update the tag's keywords property with the new keyword IDs
             tagToUpdate.keywords = [...tagToUpdate.keywords, ...keywordIds];
         
-            // Save the updated category to the database
+            // Save the updated tag to the database
             await tagToUpdate.save();  
             
             return tagToUpdate
@@ -162,7 +162,7 @@ export class TagService {
               );
           
               if (!tagToUpdate) {
-                return {message: `Category with ID ${tagId} not found.`};
+                return {message: `Tag with ID ${tagId} not found.`};
               }
           
                 return tagToUpdate;

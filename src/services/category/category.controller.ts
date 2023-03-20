@@ -39,6 +39,7 @@ export class CategoryController {
         return this.CategoryService.updateCategory(id, categorie);
     };
 
+    /* Put to update the category with keywords passed by array of keyword object */
     @Put('keywords/:id')
     addKeyword(@Param('id') idCategory: string, @Body() keywords: KeywordDto[]): Promise<Category | Message> {
         return this.CategoryService.addKeywords(idCategory, keywords);

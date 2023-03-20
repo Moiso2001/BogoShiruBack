@@ -8,7 +8,7 @@ export const tagSchema = new Schema({
     picture: {
         type: String
     },
-    keyword: {
-        types: [mongoose.Types.ObjectId]
+    keywords: {
+        type: [mongoose.Types.ObjectId]
     }
 }, { strict: 'throw' })
