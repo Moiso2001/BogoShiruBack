@@ -24,11 +24,11 @@ export const spotSchema = new Schema({
         max: [5, 'Max number is 5'],
     },
     categories: {
-        types: [mongoose.Types.ObjectId]
+        type: [mongoose.Types.ObjectId]
         // required: [true, 'Categories are missing'] ??
     },
     tags: {
-        types: [mongoose.Types.ObjectId]
+        type: [mongoose.Types.ObjectId]
         // required: [true, 'Categories are missing'] ??
     }
 }, { strict: 'throw' })

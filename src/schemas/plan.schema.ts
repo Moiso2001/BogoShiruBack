@@ -15,7 +15,6 @@ export const planSchema = new Schema({
     spots: {
         type: [mongoose.Types.ObjectId]
         // required: [true, 'Categories are missing'] ??
-
     },
     rating: {
         type: Number,
