@@ -49,5 +49,4 @@ export class SpotService {
             return {message: 'An unexpected error appears', error}
         }
     }
-}
-
+};
