@@ -146,10 +146,10 @@ export class CategoryService {
     async deleteKeyword(categoryId: string, keywordName: string): Promise<Message | Category>{
         try {
           // Search keyword by name and validate it in case the keyword name does not exist.
-          const keywordToDelete = await this.keywordModel.findOne({name: keywordName.toLowerCase()});
+          const keywordToDelete = await this.keywordModel.findOne({name: keywordName});
 
           if(!keywordToDelete){
-            return {message: `Keyword with name ${keywordName.toLowerCase()} not found.`};
+            return {message: `Keyword with name ${keywordName} not found.`};
           }
 
           // Search the category and pull the keyword provided before
