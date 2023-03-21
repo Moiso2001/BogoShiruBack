@@ -54,6 +54,6 @@ export class TagController {
     /* Delete keyword on a category, this will ask for the category id and the name of the keyword */
     @Delete('keywords/:idTag/:keywordName')
     deleteKeywordOnCategory(@Param('idTag') idTag: string, @Param('keywordName') keyword: string): Promise<Message | Tag>{
-        return this.TagService.deleteKeyword(idTag, keyword)
+        return this.TagService.deleteKeyword(idTag, keyword.toLowerCase())
     };
 }

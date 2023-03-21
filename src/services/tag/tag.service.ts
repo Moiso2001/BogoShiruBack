@@ -148,10 +148,10 @@ export class TagService {
     async deleteKeyword(tagId: string, keywordName: string): Promise<Message | Tag> {   
             try {
               // Search keyword by name and validate it in case the keyword name does not exist.
-              const keywordToDelete = await this.keywordModel.findOne({name: keywordName.toLowerCase()});
+              const keywordToDelete = await this.keywordModel.findOne({name: keywordName});
     
               if(!keywordToDelete){
-                return {message: `Keyword with name ${keywordName.toLowerCase()} not found.`};
+                return {message: `Keyword with name ${keywordName} not found.`};
               }
     
               // Search the tag and pull the keyword provided before
