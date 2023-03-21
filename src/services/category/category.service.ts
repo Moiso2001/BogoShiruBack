@@ -68,7 +68,7 @@ export class CategoryService {
             const newCategory = new this.categoryModel(category)
             await newCategory.save()
 
-            return {message: `Category with name ${category.name} was created under id: ${newCategory._id}`}
+            return {message: `Category with name: ${category.name} was created under id: ${newCategory._id}`}
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
