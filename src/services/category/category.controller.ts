@@ -54,6 +54,6 @@ export class CategoryController {
     /* Delete keyword on a category, this will ask for the category id and the name of the keyword */
     @Delete('keywords/:idCategory/:keywordName')
     deleteKeywordOnCategory(@Param('idCategory') idCategory: string, @Param('keywordName') keyword: string): Promise <Message | Category>{
-        return this.CategoryService.deleteKeyword(idCategory, keyword)
+        return this.CategoryService.deleteKeyword(idCategory, keyword.toLowerCase())
     };
 }
