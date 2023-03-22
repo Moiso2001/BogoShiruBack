@@ -31,4 +31,9 @@ export class SpotController {
     updateSpot(@Param('id') id: string, @Body() updatedSpot: SpotDto){
         return this.SpotService.updateSpot(id, updatedSpot);
     }
+
+    @Delete(':id')
+    deleteSpot(@Param('id') id: string){
+        return this.SpotService.deleteSpot(id)
+    }
 }

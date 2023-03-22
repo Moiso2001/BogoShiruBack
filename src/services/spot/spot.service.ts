@@ -76,4 +76,18 @@ export class SpotService {
             return {message: 'An unexpected error appears', error};
         }
     };
+
+    async deleteSpot(id: string){
+        try {
+            const deletedSpot = await this.spotModel.findByIdAndRemove(id)
+
+            if (!deletedSpot) {
+                return { message: `Spot with id: ${id} not found` };
+            };
+          
+            return { message: `Spot with id: ${id} deleted successfully` };
+        } catch (error) {
+            return {message: 'An unexpected error appears', error};
+        }
+    }
 };
