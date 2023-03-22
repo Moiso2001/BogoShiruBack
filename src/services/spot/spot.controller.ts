@@ -19,16 +19,16 @@ export class SpotController {
 
     @Get('name/:name')
     getSpotByName(@Param('name') name: string){
-        return this.SpotService
+        return this.SpotService.getByName(name)
     }
 
     @Post()
     createPost(@Body() newSpot: SpotDto){
-
+        return this.SpotService.createSpot(newSpot)
     }
 
     @Put(':id')
-    updateSpot(@Param() id: string, @Body() updatedSpot: SpotDto){
-        
+    updateSpot(@Param('id') id: string, @Body() updatedSpot: SpotDto){
+        return this.SpotService.updateSpot(id, updatedSpot);
     }
 }

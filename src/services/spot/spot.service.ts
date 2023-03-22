@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Message, Spot } from 'src/types';
 import { SpotDto } from 'src/types/dto/spot.dto';
 
@@ -21,7 +21,7 @@ export class SpotService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async getById(id: string){
         try {
@@ -35,7 +35,7 @@ export class SpotService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async getByName(name: string){
         try {
@@ -49,17 +49,31 @@ export class SpotService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async createSpot(newSpot: SpotDto){
         try {
-            const newSpot = new this.spotModel();
+            const spot = new this.spotModel(newSpot);
             
-            await newSpot.save()
+            await spot.save()
 
-            return {message: `Category with name: ${newSpot.name} was created under id: ${newSpot._id}`}
+            return {message: `Spot with name: ${spot.name} was created under id: ${spot._id}`}
         } catch (error) {
             return {message: 'An unexpected error appears', error};
         }
-    }
+    };
+
+    async updateSpot(id: string, newSpot: SpotDto){
+        try {
+            const updatedSpot = await this.spotModel.findByIdAndUpdate(id, newSpot, {new: true});
+
+            if(!updatedSpot){
+                return {message: `Spot with id: ${id} not found`}
+            }
+
+            return updatedSpot
+        } catch (error) {
+            return {message: 'An unexpected error appears', error};
+        }
+    };
 };
