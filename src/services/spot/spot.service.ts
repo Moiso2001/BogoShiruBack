@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Message, Spot } from 'src/types';
+import { SpotDto } from 'src/types/dto/spot.dto';
 
 @Injectable()
 export class SpotService {
@@ -20,7 +21,7 @@ export class SpotService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async getById(id: string){
         try {
@@ -34,7 +35,7 @@ export class SpotService {
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
-    }
+    };
 
     async getByName(name: string){
         try {
@@ -47,6 +48,46 @@ export class SpotService {
             return spot
         } catch (error) {
             return {message: 'An unexpected error appears', error}
+        }
+    };
+
+    async createSpot(newSpot: SpotDto){
+        try {
+            const spot = new this.spotModel(newSpot);
+            
+            await spot.save()
+
+            return {message: `Spot with name: ${spot.name} was created under id: ${spot._id}`}
+        } catch (error) {
+            return {message: 'An unexpected error appears', error};
+        }
+    };
+
+    async updateSpot(id: string, newSpot: SpotDto){
+        try {
+            const updatedSpot = await this.spotModel.findByIdAndUpdate(id, newSpot, {new: true});
+
+            if(!updatedSpot){
+                return {message: `Spot with id: ${id} not found`}
+            }
+
+            return updatedSpot
+        } catch (error) {
+            return {message: 'An unexpected error appears', error};
+        }
+    };
+
+    async deleteSpot(id: string){
+        try {
+            const deletedSpot = await this.spotModel.findByIdAndRemove(id)
+
+            if (!deletedSpot) {
+                return { message: `Spot with id: ${id} not found` };
+            };
+          
+            return { message: `Spot with id: ${id} deleted successfully` };
+        } catch (error) {
+            return {message: 'An unexpected error appears', error};
         }
     }
 };
