@@ -30,7 +30,7 @@ export class CategoryController {
     /* Create a new categorie, receive it by Body */
     @Post()
     createCategory(@Body() newCategorie: CategoryDto): Promise<Message>{
-        return this.CategoryService.createCategory(newCategorie)
+        return this.CategoryService.createCategory({...newCategorie, name: newCategorie.name.toLowerCase()})
     };
 
     /* Put request, must receive an ID by Param and the categorie by Body, this categorie has the property to be updated with his value */

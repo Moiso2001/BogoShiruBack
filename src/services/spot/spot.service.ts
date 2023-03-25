@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Message, Spot } from 'src/types';
+import { Category, Message, Spot } from 'src/types';
+import { CategoryDto } from 'src/types/dto/category.dto';
 import { SpotDto } from 'src/types/dto/spot.dto';
 
 @Injectable()
 export class SpotService {
 
-    constructor(@InjectModel('spot') private readonly spotModel: Model<Spot>){};
+    constructor(
+        @InjectModel('spot') private readonly spotModel: Model<Spot>,
+        @InjectModel('category') private readonly categoryModel: Model<Category>
+        ){};
 
     async getAll(): Promise<Message | Spot[]>{
         try {
@@ -89,5 +93,49 @@ export class SpotService {
         } catch (error) {
             return {message: 'An unexpected error appears', error};
         }
-    }
+    };
+
+    async addCategorySpot(spotId: string, categories: CategoryDto[]){
+        try {
+            const spotToUpdate = await this.spotModel.findById(spotId);
+
+            // Validate if spotId exists
+            if(!spotToUpdate){
+                return{message: `Spot with ID ${spotId} not found.`}
+            }
+
+            // Map the KeywordDto array to an ab rray of keyword IDs
+            const categoriesId: Array<Types.ObjectId> = [];
+
+            for (const category of categories) { 
+            
+              // Search the category and if it does not exist we will create it
+              const result = await this.categoryModel.findOne(
+                { name: category.name.toLowerCase() }, // Case if the name already exists
+                { new: true }
+              );
+
+              // In case some category does not exist we don't want to cut all the thread, just notify it at console and continue with the next element
+              if(!result){
+                console.log({message: `Category with name: ${category.name.toLowerCase()} not found`}) 
+                continue;
+              }
+
+              // We validate if the category already exists in the spot to avoid adding duplicates
+              if(spotToUpdate.categories.includes(result._id))continue;
+
+              categoriesId.push(result._id);
+            }
+        
+            // Update the spot categories property with the new keyword IDs
+            spotToUpdate.categories = [...spotToUpdate.categories, ...categoriesId];
+        
+            // Save the updated spot into database
+            await spotToUpdate.save();  
+            
+            return spotToUpdate
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    };
 };
