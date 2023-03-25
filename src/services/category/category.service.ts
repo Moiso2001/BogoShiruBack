@@ -129,7 +129,7 @@ export class CategoryService {
               );
 
               // We validate if the keyword already exists in the category to avoid adding duplicates
-              if(categoryToUpdate.keywords.includes(result._id))continue;
+              if(categoryToUpdate.keywords.includes(result._id) || keywordIds.some(value => JSON.stringify(value) === JSON.stringify(result._id)))continue;
 
               keywordIds.push(result._id);
             }

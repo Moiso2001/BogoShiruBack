@@ -63,9 +63,12 @@ export class TagService {
     /* Used to post a Tag */
     async createTag (tag: TagDto): Promise<Message>{
         try {
-            if(!tag.name){
-                return {message: 'Name of tag is missing'}
-            }
+            // We validate if the category name already exists on 
+            const tagExist = await this.tagModel.findOne({name: tag.name});
+
+            if(tagExist){
+                return {message: `Tag with name: ${tag.name} already exist`}
+            };
 
             const newTag = new this.tagModel(tag)
             await newTag.save()
@@ -128,7 +131,7 @@ export class TagService {
               );
 
               // We validate if the keyword already exists in the tag to avoid adding duplicates
-              if(tagToUpdate.keywords.includes(result._id))continue;
+              if(tagToUpdate.keywords.includes(result._id) || keywordIds.some(value => JSON.stringify(value) === JSON.stringify(result._id)))continue;
 
               keywordIds.push(result._id);
             }
