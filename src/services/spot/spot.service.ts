@@ -117,12 +117,11 @@ export class SpotService {
 
               // In case some category does not exist we don't want to cut all the thread, just notify it at console and continue with the next element
               if(!result){
-                console.log({message: `Category with name: ${category.name.toLowerCase()} not found`}) 
-                continue;
+                return {message: `Category with name: ${category.name.toLowerCase()} not found`}
               }
 
-              // We validate if the category already exists in the spot to avoid adding duplicates
-              if(spotToUpdate.categories.includes(result._id))continue;
+              // We validate if the category already exists in the spot to avoid adding duplicates or if the ObjectId reference is duplicated on the categories array
+              if(spotToUpdate.categories.includes(result._id) || categoriesId.some(value => JSON.stringify(value) === JSON.stringify(result._id)))continue;
 
               categoriesId.push(result._id);
             }

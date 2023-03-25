@@ -30,7 +30,7 @@ export class SpotController {
 
     @Put(':id')
     updateSpot(@Param('id') id: string, @Body() updatedSpot: SpotDto){
-        return this.SpotService.updateSpot(id, updatedSpot);
+        return this.SpotService.updateSpot(id, updatedSpot)
     }
 
     @Put('categories/:id')
