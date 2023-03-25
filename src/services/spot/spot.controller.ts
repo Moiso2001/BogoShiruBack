@@ -1,4 +1,5 @@
 import { Controller, Get, Put, Post, Delete, Param, Body } from '@nestjs/common';
+import { CategoryDto } from 'src/types/dto/category.dto';
 import { SpotDto } from 'src/types/dto/spot.dto';
 import { SpotService } from './spot.service';
 
@@ -29,7 +30,12 @@ export class SpotController {
 
     @Put(':id')
     updateSpot(@Param('id') id: string, @Body() updatedSpot: SpotDto){
-        return this.SpotService.updateSpot(id, updatedSpot);
+        return this.SpotService.updateSpot(id, updatedSpot)
+    }
+
+    @Put('categories/:id')
+    addSpot(@Param('id') id: string, @Body() categories: CategoryDto[]){
+        return this.SpotService.addCategorySpot(id, categories)
     }
 
     @Delete(':id')
