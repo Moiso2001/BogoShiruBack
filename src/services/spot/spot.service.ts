@@ -208,4 +208,30 @@ export class SpotService {
             return {message: 'An unexpected error appears', error}
         }
     };
+
+    async deleteTag(spotId: string, tagName: string): Promise<Message | Spot>{
+        try {
+          // Search tag by name and validate it in case the tag name does not exist.
+          const tagToDelete = await this.tagModel.findOne({name: tagName});
+
+          if(!tagToDelete){
+            return {message: `Tag with name ${tagName} not found.`};
+          }
+
+          // Search the tag and pull the keyword provided before
+          const spotToUpdate = await this.spotModel.findByIdAndUpdate(
+            spotId,
+            { $pull: { tags: tagToDelete._id } }, // Pull method will pull out the tag by id from our Spot.tag array
+            { new: true } // Will assure spotToUpdate will be the last spot version
+          );
+      
+          if (!spotToUpdate) {
+            return {message: `Spot with ID ${spotId} not found.`};
+          }
+      
+            return spotToUpdate;
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    };
 };
