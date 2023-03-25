@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Category, Message, Spot } from 'src/types';
 import { CategoryDto } from 'src/types/dto/category.dto';
+import { Category, Message, Spot } from 'src/types';
 import { SpotDto } from 'src/types/dto/spot.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class SpotService {
@@ -133,6 +133,32 @@ export class SpotService {
             await spotToUpdate.save();  
             
             return spotToUpdate
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    };
+
+    async deleteCategory(spotId: string, categoryName: string): Promise<Message | Spot>{
+        try {
+          // Search category by name and validate it in case the category name does not exist.
+          const categoryToDelete = await this.categoryModel.findOne({name: categoryName});
+
+          if(!categoryToDelete){
+            return {message: `Category with name ${categoryName} not found.`};
+          }
+
+          // Search the category and pull the keyword provided before
+          const spotToUpdate = await this.spotModel.findByIdAndUpdate(
+            spotId,
+            { $pull: { categories: categoryToDelete._id } }, // Pull method will pull out the category by id from our Spot.category array
+            { new: true } // Will assure spotToUpdate will be the last category version
+          );
+      
+          if (!spotToUpdate) {
+            return {message: `Spot with ID ${spotId} not found.`};
+          }
+      
+            return spotToUpdate;
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }

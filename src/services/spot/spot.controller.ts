@@ -42,4 +42,9 @@ export class SpotController {
     deleteSpot(@Param('id') id: string){
         return this.SpotService.deleteSpot(id)
     }
+
+    @Delete('categories/:idSpot/:categoryName')
+    deleteCategory(@Param('idSpot') idSpot: string, @Param('categoryName') categoryName: string){
+        return this.SpotService.deleteCategory(idSpot, categoryName.toLowerCase())
+    }
 }
