@@ -63,10 +63,6 @@ export class TagService {
     /* Used to post a Tag */
     async createTag (tag: TagDto): Promise<Message>{
         try {
-            if(!tag.name){
-                return {message: 'Name of tag is missing'}
-            }
-
             const newTag = new this.tagModel(tag)
             await newTag.save()
 

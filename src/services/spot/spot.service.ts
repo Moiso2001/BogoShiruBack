@@ -1,16 +1,18 @@
 import { CategoryDto } from 'src/types/dto/category.dto';
-import { Category, Message, Spot } from 'src/types';
+import { Category, Message, Spot, Tag } from 'src/types';
 import { SpotDto } from 'src/types/dto/spot.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
+import { TagDto } from 'src/types/dto/tag.dto';
 
 @Injectable()
 export class SpotService {
 
     constructor(
+        @InjectModel('category') private readonly categoryModel: Model<Category>,
         @InjectModel('spot') private readonly spotModel: Model<Spot>,
-        @InjectModel('category') private readonly categoryModel: Model<Category>
+        @InjectModel('tag') private readonly tagModel: Model<Tag>
         ){};
 
     async getAll(): Promise<Message | Spot[]>{
@@ -104,7 +106,7 @@ export class SpotService {
                 return{message: `Spot with ID ${spotId} not found.`}
             }
 
-            // Map the KeywordDto array to an ab rray of keyword IDs
+            // Map the KeywordDto array to an array of categories IDs
             const categoriesId: Array<Types.ObjectId> = [];
 
             for (const category of categories) { 
@@ -126,8 +128,51 @@ export class SpotService {
               categoriesId.push(result._id);
             }
         
-            // Update the spot categories property with the new keyword IDs
+            // Update the spot categories property with the new categories IDs
             spotToUpdate.categories = [...spotToUpdate.categories, ...categoriesId];
+        
+            // Save the updated spot into database
+            await spotToUpdate.save();  
+            
+            return spotToUpdate
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    };
+
+    async addTagSpot(spotId: string, tags: TagDto[]){
+        try {
+            const spotToUpdate = await this.spotModel.findById(spotId);
+
+            // Validate if spotId exists
+            if(!spotToUpdate){
+                return{message: `Spot with ID ${spotId} not found.`}
+            }
+
+            // Map the KeywordDto array to an array of tags IDs
+            const tagsId: Array<Types.ObjectId> = [];
+
+            for (const tag of tags) { 
+            
+              // Search the tag and if it does not exist we will create it
+              const result = await this.tagModel.findOne(
+                { name: tag.name.toLowerCase() }, // Case if the name already exists
+                { new: true }
+              );
+
+              // In case some tag does not exist notify it
+              if(!result){
+                return {message: `Tag with name: ${tag.name.toLowerCase()} not found`}
+              }
+
+              // We validate if the tag already exists in the spot to avoid adding duplicates or if the ObjectId reference is duplicated on the tags array
+              if(spotToUpdate.tags.includes(result._id) || tagsId.some(value => JSON.stringify(value) === JSON.stringify(result._id)))continue;
+
+              tagsId.push(result._id);
+            }
+        
+            // Update the spot tags property with the new tags IDs
+            spotToUpdate.tags = [...spotToUpdate.tags, ...tagsId];
         
             // Save the updated spot into database
             await spotToUpdate.save();  
