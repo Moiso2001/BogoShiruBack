@@ -29,7 +29,7 @@ export class SpotService {
         }
     };
 
-    async getById(id: string){
+    async getById(id: string): Promise<Message | Spot>{
         try {
             const spot = await this.spotModel.findById(id);
 
@@ -43,7 +43,7 @@ export class SpotService {
         }
     };
 
-    async getByName(name: string){
+    async getByName(name: string): Promise<Message | Spot>{
         try {
             const spot = await this.spotModel.findOne({name});
 
@@ -57,7 +57,7 @@ export class SpotService {
         }
     };
 
-    async createSpot(newSpot: SpotDto){
+    async createSpot(newSpot: SpotDto): Promise<Message>{
         try {
             const spot = new this.spotModel(newSpot);
             
@@ -69,7 +69,7 @@ export class SpotService {
         }
     };
 
-    async updateSpot(id: string, newSpot: SpotDto){
+    async updateSpot(id: string, newSpot: SpotDto): Promise<Message | Spot>{
         try {
             const updatedSpot = await this.spotModel.findByIdAndUpdate(id, newSpot, {new: true});
 
@@ -83,7 +83,7 @@ export class SpotService {
         }
     };
 
-    async deleteSpot(id: string){
+    async deleteSpot(id: string): Promise<Message>{
         try {
             const deletedSpot = await this.spotModel.findByIdAndRemove(id)
 
@@ -97,7 +97,7 @@ export class SpotService {
         }
     };
 
-    async addCategorySpot(spotId: string, categories: CategoryDto[]){
+    async addCategorySpot(spotId: string, categories: CategoryDto[]): Promise<Message | Spot>{
         try {
             const spotToUpdate = await this.spotModel.findById(spotId);
 
@@ -140,7 +140,7 @@ export class SpotService {
         }
     };
 
-    async addTagSpot(spotId: string, tags: TagDto[]){
+    async addTagSpot(spotId: string, tags: TagDto[]): Promise<Message | Spot>{
         try {
             const spotToUpdate = await this.spotModel.findById(spotId);
 
