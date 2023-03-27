@@ -10,5 +10,5 @@ export type Spot = {
     pictures: string[]
     rating: Number
     categories: Array<Types.ObjectId>
-    tags: string[]
+    tags: Array<Types.ObjectId>
 }

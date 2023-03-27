@@ -30,7 +30,7 @@ export class TagController {
     /* Create a new tag, receive it by Body */
     @Post()
     createTag(@Body() newTag: TagDto): Promise<Message>{
-        return this.TagService.createTag(newTag)
+        return this.TagService.createTag({...newTag, name: newTag.name.toLowerCase()})
     };
 
     /* Put request, must receive an ID by Param and the tag by Body, this tag has the property to be updated with his value */
