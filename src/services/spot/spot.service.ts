@@ -124,7 +124,7 @@ export class SpotService {
                 { new: true }
               );
 
-              // In case some category does not exist we don't want to cut all the thread, just notify it at console and continue with the next element
+              // In case some category does not exist
               if(!result){
                 return {message: `Category with name: ${category.name.toLowerCase()} not found`}
               }
