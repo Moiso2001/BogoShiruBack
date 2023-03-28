@@ -69,7 +69,6 @@ export class KeywordService {
     /* Well... any further to say update and delete... just that :) */
     async updateKeywords(id: string, keyword: KeywordDto): Promise<Keyword | Message>{
         try {
-            console.log(id)
             const updatedKeyword = await this.keywordModel.findByIdAndUpdate(id, keyword, {new: true})
             
             if(!updatedKeyword){
