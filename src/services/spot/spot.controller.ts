@@ -1,9 +1,9 @@
 import { Controller, Get, Put, Post, Delete, Param, Body } from '@nestjs/common';
-import { Message, Spot } from 'src/types';
 import { CategoryDto } from 'src/types/dto/category.dto';
 import { SpotDto } from 'src/types/dto/spot.dto';
 import { TagDto } from 'src/types/dto/tag.dto';
 import { SpotService } from './spot.service';
+import { Message, Spot } from 'src/types';
 
 @Controller('spots')
 export class SpotController {

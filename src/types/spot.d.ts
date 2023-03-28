@@ -11,4 +11,5 @@ export type Spot = {
     rating: Number
     categories: Array<Types.ObjectId>
     tags: Array<Types.ObjectId>
+    description: string
 }
