@@ -9,6 +9,7 @@ export const spotSchema = new Schema({
     },
     contact_info: {
         type: Object,
+        required: [true, 'Contact info is missing'],
         validate: {
             validator: spotContactInfoValidator
         }
@@ -22,6 +23,10 @@ export const spotSchema = new Schema({
         type: Number,
         min: [1, 'Min number is 1'],
         max: [5, 'Max number is 5'],
+    },
+    description: {
+        type: String,
+        maxlength: 3000
     },
     categories: {
         type: [mongoose.Types.ObjectId]

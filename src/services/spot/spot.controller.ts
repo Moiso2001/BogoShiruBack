@@ -7,7 +7,6 @@ import { SpotService } from './spot.service';
 
 @Controller('spots')
 export class SpotController {
-
     constructor(private readonly SpotService: SpotService){}
 
     @Get()
