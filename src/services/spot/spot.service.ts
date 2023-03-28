@@ -59,6 +59,13 @@ export class SpotService {
 
     async createSpot(newSpot: SpotDto): Promise<Message>{
         try {
+            // We validate if the spot name already exists on database
+            const spotExist = await this.spotModel.findOne({name: newSpot.name});
+
+            if(spotExist){
+                return {message: `Spot with name: ${spotExist.name} already exist`}
+            };
+
             const spot = new this.spotModel(newSpot);
             
             await spot.save()
