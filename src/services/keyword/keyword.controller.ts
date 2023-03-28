@@ -25,7 +25,7 @@ export class KeywordController {
 
     @Post()
     createKeyword(@Body() newKeyword: KeywordDto){
-        return this.KeywordService.createKeyword(newKeyword)
+        return this.KeywordService.createKeyword({...newKeyword, name: newKeyword.name.toLowerCase()})
     };
 
     @Put(':id')
