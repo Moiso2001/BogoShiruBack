@@ -20,5 +20,9 @@ export const planSchema = new Schema({
         type: Number,
         min: [1, 'Min number is 1'],
         max: [5, 'Max number is 5'],
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
 },{ strict: 'throw' })
