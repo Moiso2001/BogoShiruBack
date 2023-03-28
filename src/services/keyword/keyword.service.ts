@@ -57,14 +57,10 @@ export class KeywordService {
     /* Used to post a keyword */
     async createKeyword(keyword: KeywordDto): Promise<Message>{
         try {
-            if(!keyword.name){
-                return {message: 'Name of keyword is missing'}
-            }
-
             const newKeyword = new this.keywordModel(keyword)
             await newKeyword.save()
 
-            return {message: `Category with name ${keyword.name} was created under id: ${newKeyword._id}`}
+            return {message: `Keyword with name ${newKeyword.name} was created under id: ${newKeyword._id}`}
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
@@ -94,7 +90,7 @@ export class KeywordService {
                 return {message: `The keyword under id: ${id} does not exist`}
             }
 
-            return {message: `The category under the id: ${deletedKeyword._id} was deleted correctly`}
+            return {message: `The keyword under the id: ${deletedKeyword._id} was deleted correctly`}
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
