@@ -4,4 +4,5 @@ export type Plan = {
     location: string
     spots: Array<Types.ObjectId>
     rating: number
+    deletedAt?: Date
 }
