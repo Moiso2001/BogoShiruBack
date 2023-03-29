@@ -1,4 +1,4 @@
-export {spotContactInfo, Spot} from "./spot";
+export {spotContactInfo, Spot, SpotRequest} from "./spot";
 export {Category} from "./category";
 export {Message} from "./message"
 export {Keyword} from "./keyword"

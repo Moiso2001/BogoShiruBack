@@ -1,6 +1,6 @@
 import { CategoryDto } from 'src/types/dto/category.dto';
 import { Category, Message, Spot, Tag } from 'src/types';
-import { SpotDto } from 'src/types/dto/spot.dto';
+import { SpotDto, SpotRequestDto } from 'src/types/dto/spot.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
@@ -13,7 +13,22 @@ export class SpotService {
         @InjectModel('category') private readonly categoryModel: Model<Category>,
         @InjectModel('spot') private readonly spotModel: Model<Spot>,
         @InjectModel('tag') private readonly tagModel: Model<Tag>
-        ){};
+    ){};
+
+    async spotRequest(spotRequest: SpotRequestDto){
+        try {
+            // We'll handle few cases, the first one when the user will type a spot name on the keyword input.
+            const keywordIsSpotName = await this.categoryModel.find({name: spotRequest.keyword}).exec();
+
+            if(keywordIsSpotName){
+                return keywordIsSpotName
+            }
+
+
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    }
 
     async getAll(): Promise<Message | Spot[]>{
         try {

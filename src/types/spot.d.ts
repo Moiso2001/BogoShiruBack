@@ -9,7 +9,14 @@ export type Spot = {
     address: string
     pictures: string[]
     rating: Number
+    price: Number
     categories: Array<Types.ObjectId>
     tags: Array<Types.ObjectId>
     description: string
+}
+
+export type SpotRequest = {
+    keyword: string
+    budget?: number
+    location?: string
 }
