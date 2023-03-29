@@ -2,6 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Plan, Spot } from 'src/types/index';
 import { Model } from 'mongoose';
+import { PlanDto } from 'src/types/dto/plan.dto';
 
 @Injectable()
 export class PlanService {
@@ -13,7 +14,7 @@ export class PlanService {
 
     async getAll(){
         try {
-            const plans = await this.planModel.find({deletedAt: null}).exec();
+            const plans = await this.planModel.find({deletedAt: null}).exec();// Excluding soft deleted documents
 
             if(plans.length === 0){
                 return {message: `Plans not found`}
@@ -44,7 +45,7 @@ export class PlanService {
 
     async getByName(namePlan: string){
         try {
-            const plan = await this.planModel.findOne({name: namePlan, deletedAt: null}).exec();
+            const plan = await this.planModel.findOne({name: namePlan, deletedAt: null}).exec(); // Excluding soft deleted documents
 
             if(!plan){
                 return {message: `Plan with name: ${namePlan} not found`}
@@ -56,9 +57,9 @@ export class PlanService {
         }
     }
 
-    async createPlan(newPlan: Plan){
+    async createPlan(newPlan: PlanDto){
         try {
-            const planExisted = await this.planModel.findOne({name: newPlan.name}).exec();
+            const planExisted = await this.planModel.findOne({name: newPlan.name, deletedAt: null}).exec(); // Excluding soft deleted documents
 
             if(planExisted){
                 return {message: `Plan with name: ${newPlan.name} already existed under id: ${planExisted._id}`}
@@ -74,13 +75,13 @@ export class PlanService {
         }
     }
 
-    async updatePlan(idPlan: string, newPlan: Plan){
+    async updatePlan(idPlan: string, newPlan: PlanDto){
         try {
             const updatedPlan = await this.planModel.findByIdAndUpdate(
                 idPlan, 
                 newPlan, 
                 {new: true, runValidators: true})
-                .where({deletedAt: null}).exec();
+                .where({deletedAt: null}).exec(); // Excluding soft deleted documents
 
             if(!updatedPlan){
                 return {message: `Plan under id: ${idPlan} not found`}
@@ -94,6 +95,7 @@ export class PlanService {
 
     async deletePlan(idPlan){
         try {
+            //Soft delete implemented to avoid DB error queries on future
             const deletedPlan = await this.planModel.findByIdAndUpdate(
                 idPlan,
                 { deletedAt: new Date() },
@@ -108,5 +110,5 @@ export class PlanService {
         } catch (error) {
             return {message: 'An unexpected error ocurred on DB', error};
         }
-    }
+    };
 }

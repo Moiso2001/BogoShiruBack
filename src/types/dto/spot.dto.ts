@@ -6,6 +6,13 @@ export class SpotDto {
     address: string
     pictures: string[]
     rating: Number
+    price: Number
     categories: string[]
     tags: string[]
+}
+
+export class SpotRequestDto {
+    keyword: string
+    budget?: number
+    location?: string
 }

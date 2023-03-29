@@ -24,6 +24,11 @@ export const spotSchema = new Schema({
         min: [1, 'Min number is 1'],
         max: [5, 'Max number is 5'],
     },
+    price: {
+        type: Number,
+        min: [0, 'Min number is 1'],
+        max: [5, 'Max number is 5'],
+    },
     description: {
         type: String,
         maxlength: 3000
