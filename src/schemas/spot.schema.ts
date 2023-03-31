@@ -40,5 +40,9 @@ export const spotSchema = new Schema({
     tags: {
         type: [mongoose.Types.ObjectId]
         // required: [true, 'Categories are missing'] ??
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
 }, { strict: 'throw' })

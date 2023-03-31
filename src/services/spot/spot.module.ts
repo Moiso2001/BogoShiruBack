@@ -5,12 +5,14 @@ import { tagSchema } from 'src/schemas/tag.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SpotService } from './spot.service';
 import { Module } from '@nestjs/common';
+import { keywordSchema } from 'src/schemas/keyword.schema';
 
 
 @Module({
   imports: [MongooseModule.forFeature([
-    {name: 'spot', schema: spotSchema},
     {name: 'category', schema: categorySchema},
+    {name: 'keyword', schema: keywordSchema},
+    {name: 'spot', schema: spotSchema},
     {name: 'tag', schema: tagSchema}
   ])],
   providers: [SpotService],
