@@ -87,17 +87,22 @@ export class KeywordService {
         }
     };
 
-    async deleteKeyword(id: string): Promise<Message>{
+    async deleteKeyword(id: string): Promise<Message | Keyword>{
         try {
-            const deletedKeyword = await this.keywordModel.findByIdAndDelete(id).exec();
+            //Soft delete implemented to avoid DB error queries on future
+            const deletedKeyword = await this.keywordModel.findByIdAndUpdate(
+                id,
+                { deletedAt: new Date() },
+                { new: true }
+                )
 
             if(!deletedKeyword){
-                return {message: `The keyword under id: ${id} does not exist`}
+                return {message: `Plan under id: ${id} not found`}
             }
 
-            return {message: `The keyword under the id: ${deletedKeyword._id} was deleted correctly`}
+            return deletedKeyword
         } catch (error) {
-            return {message: 'An unexpected error appears', error}
+            return {message: 'An unexpected error ocurred on DB', error};
         }
     }
 }
