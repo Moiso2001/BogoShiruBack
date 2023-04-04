@@ -46,7 +46,7 @@ export class KeywordService {
     async getKeywordByName(name: string): Promise<Keyword | Message>{
         try {
             const keyword = await this.keywordModel
-                .findOne({name})
+                .findOne({name: name.toLowerCase()})
                 .where('deletedAt').equals(null) // Exclude soft deleted plans
                 .exec();
 
@@ -99,17 +99,19 @@ export class KeywordService {
     };
 
     async deleteKeyword(id: string): Promise<Message | Keyword>{
-        try {
+        try { 
             //Soft delete implemented to avoid DB error queries on future
-            const deletedKeyword = await this.keywordModel.findByIdAndUpdate(
-                id,
-                { deletedAt: new Date() },
-                { new: true }
-                )
+            const deletedKeyword = await this.keywordModel
+                .findById(id,{ new: true })
+                .where({deletedAt: null})
+                .exec();
 
             if(!deletedKeyword){
                 return {message: `Plan under id: ${id} not found`}
             }
+
+            deletedKeyword.deletedAt = new Date()
+            await deletedKeyword.save()
 
             return deletedKeyword
         } catch (error) {

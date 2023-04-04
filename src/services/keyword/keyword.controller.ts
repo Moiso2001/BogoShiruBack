@@ -26,12 +26,12 @@ export class KeywordController {
 
     @Post()
     createKeyword(@Body() newKeyword: KeywordDto): Promise<Message>{
-        return this.KeywordService.createKeyword({...newKeyword, name: newKeyword.name.toLowerCase()})
+        return this.KeywordService.createKeyword(newKeyword.name ? {...newKeyword, name: newKeyword.name.toLowerCase()}: newKeyword) // We validate if name exist to avoid Type error undefined if name is not passed at lowercase method
     };
 
     @Put(':id')
     updateKeyword(@Param('id') id: string, @Body() keyword: KeywordDto): Promise<Keyword | Message>{
-        return this.KeywordService.updateKeywords(id, keyword)
+        return this.KeywordService.updateKeywords(id, keyword.name ? {...keyword, name: keyword.name.toLowerCase()}: keyword) // We validate if name exist to avoid Type error undefined if name is not passed at lowercase method
     };
 
     @Delete(':id')
