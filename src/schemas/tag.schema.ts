@@ -10,5 +10,9 @@ export const tagSchema = new Schema({
     },
     keywords: {
         type: [mongoose.Types.ObjectId]
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
 }, { strict: 'throw' })

@@ -81,7 +81,8 @@ export class PlanService {
                 idPlan, 
                 newPlan, 
                 {new: true, runValidators: true})
-                .where({deletedAt: null}).exec(); // Excluding soft deleted documents
+                .where({deletedAt: null}) // Excluding soft deleted documents
+                .exec(); 
 
             if(!updatedPlan){
                 return {message: `Plan under id: ${idPlan} not found`}
@@ -96,15 +97,17 @@ export class PlanService {
     async deletePlan(idPlan){
         try {
             //Soft delete implemented to avoid DB error queries on future
-            const deletedPlan = await this.planModel.findByIdAndUpdate(
-                idPlan,
-                { deletedAt: new Date() },
-                { new: true }
-                )
+            const deletedPlan = await this.planModel
+                .findById(idPlan,{ new: true })
+                .where({deletedAt: null})
+                .exec();
 
             if(!deletedPlan){
                 return {message: `Plan under id: ${idPlan} not found`}
             }
+
+            deletedPlan.deletedAt = new Date();
+            await deletedPlan.save();
 
             return deletedPlan
         } catch (error) {
