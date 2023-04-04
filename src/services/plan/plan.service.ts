@@ -81,7 +81,8 @@ export class PlanService {
                 idPlan, 
                 newPlan, 
                 {new: true, runValidators: true})
-                .where({deletedAt: null}).exec(); // Excluding soft deleted documents
+                .where({deletedAt: null}) // Excluding soft deleted documents
+                .exec(); 
 
             if(!updatedPlan){
                 return {message: `Plan under id: ${idPlan} not found`}

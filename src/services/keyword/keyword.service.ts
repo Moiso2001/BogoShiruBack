@@ -12,7 +12,7 @@ export class KeywordService {
     /* We devided the services between type requests, initially the getAll which brings all keywords in DB */
     async getAll(): Promise<Keyword[] | Message> {
         try {
-            const keywords = await this.keywordModel.find()
+            const keywords = await this.keywordModel.find({deletedAt: null}).exec()
 
             if(keywords.length > 0){
                 return keywords
@@ -27,7 +27,10 @@ export class KeywordService {
     /* Looking by ID */
     async getKeywordById(id: string): Promise<Keyword | Message>{
         try {
-            const keyword = await this.keywordModel.findById(id);
+            const keyword = await this.keywordModel
+                .findById(id)
+                .where('deletedAt').equals(null) // Exclude soft deleted plans
+                .exec();
 
             if(keyword){
                 return keyword
@@ -42,7 +45,10 @@ export class KeywordService {
     /* Looking by name */
     async getKeywordByName(name: string): Promise<Keyword | Message>{
         try {
-            const keyword = await this.keywordModel.findOne({name});
+            const keyword = await this.keywordModel
+                .findOne({name: name.toLowerCase()})
+                .where('deletedAt').equals(null) // Exclude soft deleted plans
+                .exec();
 
             if(keyword){
                 return keyword
@@ -73,9 +79,14 @@ export class KeywordService {
     };
 
     /* Well... any further to say update and delete... just that :) */
-    async updateKeywords(id: string, keyword: KeywordDto): Promise<Keyword | Message>{
+    async updateKeywords(id: string, newKeyword: KeywordDto): Promise<Keyword | Message>{
         try {
-            const updatedKeyword = await this.keywordModel.findByIdAndUpdate(id, keyword, {new: true})
+            const updatedKeyword = await this.keywordModel.findByIdAndUpdate(
+                id, 
+                newKeyword, 
+                {new: true, runValidators: true})
+                .where({deletedAt: null}) // Excluding soft deleted documents
+                .exec();
             
             if(!updatedKeyword){
                 return {message: `Keyword under id: ${id} doesn't exist`}
@@ -87,17 +98,24 @@ export class KeywordService {
         }
     };
 
-    async deleteKeyword(id: string): Promise<Message>{
-        try {
-            const deletedKeyword = await this.keywordModel.findByIdAndDelete(id).exec();
+    async deleteKeyword(id: string): Promise<Message | Keyword>{
+        try { 
+            //Soft delete implemented to avoid DB error queries on future
+            const deletedKeyword = await this.keywordModel
+                .findById(id,{ new: true })
+                .where({deletedAt: null})
+                .exec();
 
             if(!deletedKeyword){
-                return {message: `The keyword under id: ${id} does not exist`}
+                return {message: `Plan under id: ${id} not found`}
             }
 
-            return {message: `The keyword under the id: ${deletedKeyword._id} was deleted correctly`}
+            deletedKeyword.deletedAt = new Date()
+            await deletedKeyword.save()
+
+            return deletedKeyword
         } catch (error) {
-            return {message: 'An unexpected error appears', error}
+            return {message: 'An unexpected error ocurred on DB', error};
         }
     }
 }

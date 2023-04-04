@@ -32,7 +32,19 @@ export class SpotService {
             }   
 
             const categoryRelatedKeyword = await this.categoryModel.find({keywords: {$in: [keywordPassed._id]}}).exec();
-            // const spotsRelatedCategory = await this.spotModel.find({categories: {$in: []}})
+            const categoriesId = categoryRelatedKeyword.map(e => e._id);
+
+            if(categoriesId.length === 0){
+                return {message: `Categories not found related with keyword: ${spotRequest.keyword}`}
+            }
+
+            const spotsRelatedCategory = await this.spotModel.find({categories: {$in: categoriesId}});
+
+            if(spotsRelatedCategory.length === 0){
+                return {message: `Spots not found related with keyword: ${spotRequest.keyword}`}
+            }
+
+            return spotsRelatedCategory
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
