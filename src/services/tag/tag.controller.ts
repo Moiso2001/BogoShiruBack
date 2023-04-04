@@ -30,13 +30,13 @@ export class TagController {
     /* Create a new tag, receive it by Body */
     @Post()
     createTag(@Body() newTag: TagDto): Promise<Message>{
-        return this.TagService.createTag({...newTag, name: newTag.name.toLowerCase()})
+        return this.TagService.createTag(newTag.name ? {...newTag, name: newTag.name.toLowerCase()} : newTag) // Avoiding type error by undefined on .toLowerCase
     };
 
     /* Put request, must receive an ID by Param and the tag by Body, this tag has the property to be updated with his value */
     @Put(':id')
     updateTag(@Param('id') id: string, @Body() newTag: TagDto): Promise<Tag | Message>{
-        return this.TagService.updateTag(id, newTag)
+        return this.TagService.updateTag(id, newTag.name ? {...newTag, name: newTag.name.toLowerCase()} : newTag) // Avoiding type error by undefined on .toLowerCase
     };
 
     /* Put to update the category with keywords passed by array of keyword object */
