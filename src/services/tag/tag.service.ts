@@ -17,7 +17,7 @@ export class TagService {
     /* We devided the services between type requests, initially the getAll which brings all tags in DB */
     async getAll(): Promise<Tag[] | Message>{
         try {
-            const tags = await this.tagModel.find()
+            const tags = await this.tagModel.find({deletedAt: null}).exec();
 
             if(tags.length > 0){
                 return tags
@@ -32,9 +32,11 @@ export class TagService {
     /* Looking by ID */
     async getTagById(id: string): Promise<Tag | Message>{
         try {
-            const tag = await this.tagModel.findById(id);
+            const tag = await this.tagModel
+                .findById(id)
+                .where({deletedAt: null}) // Excludes soft deleted tags
+                .exec();
 
-            console.log(tag)
             if(tag){
                 return tag
             }
@@ -48,7 +50,10 @@ export class TagService {
     /* Looking by name */
     async getTagByName(name: string): Promise<Tag | Message>{
         try {
-            const tag = await this.tagModel.findOne({name});
+            const tag = await this.tagModel
+                .findOne({name: name.toLowerCase()})
+                .where({deletedAt: null}) // Excluding all soft deleted tags
+                .exec();
 
             if(tag){
                 return tag
@@ -80,9 +85,14 @@ export class TagService {
     };
 
     /* Well... any further to say update and delete... just that :) */
-    async updateTag(id: string, tag: TagDto): Promise<Tag | Message>{
+    async updateTag(id: string, newTag: TagDto): Promise<Tag | Message>{
         try {
-            const updatedTag = await this.tagModel.findByIdAndUpdate(id, tag, {new: true})
+            const updatedTag = await this.tagModel.findByIdAndUpdate(
+                id, 
+                newTag, 
+                {new: true, runValidators: true})
+                .where({deletedAt: null}) // Excluding soft deleted documents
+                .exec();
 
             if(!updatedTag){
                 return {message: `Tag under id: ${id} doesn't exist`}
@@ -94,15 +104,22 @@ export class TagService {
         }
     };
 
-    async deleteTag(id: string): Promise<Message>{
+    async deleteTag(id: string): Promise<Message | Tag>{
         try {
-            const deletedTag = await this.tagModel.findByIdAndDelete(id).exec();
+            //Soft delete implemented to avoid DB error queries on future
+            const deletedTag = await this.tagModel
+                .findById(id,{ new: true })
+                .where({deletedAt: null})
+                .exec();
 
             if(!deletedTag){
-                return {message: `The category under id: ${id} does not exist`}
+                return {message: `Tag under id: ${id} not found`}
             }
 
-            return {message: `The tag under the id: ${deletedTag._id} was deleted correctly`}
+            deletedTag.deletedAt = new Date();
+            await deletedTag.save();
+
+            return deletedTag        
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
@@ -111,7 +128,10 @@ export class TagService {
     /* Keywords relation with Tag */
     async addKeywords(idTag: string, keywords: KeywordDto[]){
         try {
-            const tagToUpdate = await this.tagModel.findById(idTag);
+            const tagToUpdate = await this.tagModel
+                .findById(idTag)
+                .where({deletedAt: null}) // Excluding all soft deleted tags
+                .exec();
 
             // Validate if idTag exists
             if(!tagToUpdate){
@@ -125,7 +145,7 @@ export class TagService {
             
               // Search the keyword and if it does not exist we will create it
               const result = await this.keywordModel.findOneAndUpdate(
-                { name: keyword.name.toLowerCase() }, // Case if the name already exists
+                { name: keyword.name.toLowerCase(), deletedAt: {$eq: null}}, // Case if the name already exists
                 { name: keyword.name.toLowerCase() }, // Case if the name doesn't exist and we create it here
                 { upsert: true, new: true }
               );
@@ -151,19 +171,22 @@ export class TagService {
     async deleteKeyword(tagId: string, keywordName: string): Promise<Message | Tag> {   
             try {
               // Search keyword by name and validate it in case the keyword name does not exist.
-              const keywordToDelete = await this.keywordModel.findOne({name: keywordName});
+              const keywordToDelete = await this.keywordModel
+                .findOne({name: keywordName.toLowerCase()})
+                .where({deletedAt: null}) // Excluding soft deleted keywords
+                .exec();
     
               if(!keywordToDelete){
                 return {message: `Keyword with name ${keywordName} not found.`};
               }
     
               // Search the tag and pull the keyword provided before
-              const tagToUpdate = await this.tagModel.findByIdAndUpdate(
-                tagId,
-                { $pull: { keywords: keywordToDelete._id } }, // Pull method will pull out the keyword by id from our Tag.keyword array
-                { new: true } // Will assure tagToUpdate will be the last tag version
+              const tagToUpdate = await this.tagModel.findOneAndUpdate(
+                {_id: tagId, deletedAt: null},
+                { $pull: { keywords: keywordToDelete._id }},    // Pull method will pull out the keyword by id from our Tag.keyword array 
+                { new: true }                                   // Will assure tagToUpdate will be the last tag version
               );
-          
+                
               if (!tagToUpdate) {
                 return {message: `Tag with ID ${tagId} not found.`};
               }
