@@ -107,7 +107,7 @@ export class KeywordService {
                 .exec();
 
             if(!deletedKeyword){
-                return {message: `Plan under id: ${id} not found`}
+                return {message: `Keyword under id: ${id} not found`}
             }
 
             deletedKeyword.deletedAt = new Date();

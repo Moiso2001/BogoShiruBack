@@ -17,7 +17,7 @@ export class TagService {
     /* We devided the services between type requests, initially the getAll which brings all tags in DB */
     async getAll(): Promise<Tag[] | Message>{
         try {
-            const tags = await this.tagModel.find()
+            const tags = await this.tagModel.find({deletedAt: null}).exec();
 
             if(tags.length > 0){
                 return tags
@@ -32,9 +32,11 @@ export class TagService {
     /* Looking by ID */
     async getTagById(id: string): Promise<Tag | Message>{
         try {
-            const tag = await this.tagModel.findById(id);
+            const tag = await this.tagModel
+                .findById(id)
+                .where({deletedAt: null}) // Excludes soft deleted tags
+                .exec();
 
-            console.log(tag)
             if(tag){
                 return tag
             }
@@ -48,7 +50,10 @@ export class TagService {
     /* Looking by name */
     async getTagByName(name: string): Promise<Tag | Message>{
         try {
-            const tag = await this.tagModel.findOne({name});
+            const tag = await this.tagModel
+                .findOne({name})
+                .where({deletedAt: null}) // Excluding all soft deleted tags
+                .exec();
 
             if(tag){
                 return tag
@@ -94,15 +99,22 @@ export class TagService {
         }
     };
 
-    async deleteTag(id: string): Promise<Message>{
+    async deleteTag(id: string): Promise<Message | Tag>{
         try {
-            const deletedTag = await this.tagModel.findByIdAndDelete(id).exec();
+            //Soft delete implemented to avoid DB error queries on future
+            const deletedTag = await this.tagModel
+                .findById(id,{ new: true })
+                .where({deletedAt: null})
+                .exec();
 
             if(!deletedTag){
-                return {message: `The category under id: ${id} does not exist`}
+                return {message: `Tag under id: ${id} not found`}
             }
 
-            return {message: `The tag under the id: ${deletedTag._id} was deleted correctly`}
+            deletedTag.deletedAt = new Date();
+            await deletedTag.save();
+
+            return deletedTag        
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }

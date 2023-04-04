@@ -3,4 +3,5 @@ export type Tag = {
     name: string
     picture?: string
     keywords: Array<Types.ObjectId>
+    deletedAt?: Date
 }

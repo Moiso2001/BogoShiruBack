@@ -47,7 +47,7 @@ export class TagController {
 
     /* To delete a tag is necessary just the ID any other parameter will throw an error*/
     @Delete(':id')
-    deleteTag(@Param('id') id: string): Promise<Message>{
+    deleteTag(@Param('id') id: string): Promise<Message | Tag>{
         return this.TagService.deleteTag(id)
     };
 
