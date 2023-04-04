@@ -110,8 +110,8 @@ export class KeywordService {
                 return {message: `Plan under id: ${id} not found`}
             }
 
-            deletedKeyword.deletedAt = new Date()
-            await deletedKeyword.save()
+            deletedKeyword.deletedAt = new Date();
+            await deletedKeyword.save();
 
             return deletedKeyword
         } catch (error) {
