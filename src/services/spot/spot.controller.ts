@@ -52,7 +52,7 @@ export class SpotController {
     };
 
     @Delete(':id')
-    deleteSpot(@Param('id') id: string): Promise<Message>{
+    deleteSpot(@Param('id') id: string): Promise<Message | Spot>{
         return this.SpotService.deleteSpot(id)
     };
 
