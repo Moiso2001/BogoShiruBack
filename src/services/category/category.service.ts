@@ -65,7 +65,7 @@ export class CategoryService {
     async createCategory(category: CategoryDto): Promise<Message>{
         try {
             // We validate if the category name already exists on 
-            const categoryExist = await this.categoryModel.findOne({name: category.name});
+            const categoryExist = await this.categoryModel.findOne({name: category.name, deletedAt: null});
 
             if(categoryExist){
                 return {message: `Category with name: ${category.name} already exist`}
@@ -180,17 +180,17 @@ export class CategoryService {
     async deleteKeyword(categoryId: string, keywordName: string): Promise<Message | Category>{
         try {
           // Search keyword by name and validate it in case the keyword name does not exist.
-          const keywordToDelete = await this.keywordModel.findOne({name: keywordName});
+          const keywordToDelete = await this.keywordModel.findOne({name: keywordName, deletedAt: null}).exec()
 
           if(!keywordToDelete){
             return {message: `Keyword with name ${keywordName} not found.`};
           }
 
           // Search the category and pull the keyword provided before
-          const categoryToUpdate = await this.categoryModel.findByIdAndUpdate(
-            categoryId,
+          const categoryToUpdate = await this.categoryModel.findOneAndUpdate(
+            {_id: categoryId, deletedAt: null},           // Excluding all soft deleted documents
             { $pull: { keywords: keywordToDelete._id } }, // Pull method will pull out the kategory by id from our Category.keyword array
-            { new: true } // Will assure categoryToUpdate will be the last category version
+            { new: true }                                 // Will assure categoryToUpdate will be the last category version
           );
       
           if (!categoryToUpdate) {

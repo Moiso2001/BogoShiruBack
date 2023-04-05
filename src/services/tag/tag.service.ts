@@ -69,7 +69,7 @@ export class TagService {
     async createTag (tag: TagDto): Promise<Message>{
         try {
             // We validate if the category name already exists on 
-            const tagExist = await this.tagModel.findOne({name: tag.name});
+            const tagExist = await this.tagModel.findOne({name: tag.name, deletedAt: null});
 
             if(tagExist){
                 return {message: `Tag with name: ${tag.name} already exist`}

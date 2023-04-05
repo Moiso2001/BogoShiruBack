@@ -63,7 +63,7 @@ export class KeywordService {
     /* Used to post a keyword */
     async createKeyword(keyword: KeywordDto): Promise<Message>{
         try {
-            const keywordExists = await this.keywordModel.findOne(keyword)
+            const keywordExists = await this.keywordModel.findOne(keyword).where({deletedAt: null}).exec()
 
             if(keywordExists){
                 return {message: `Keyword already existed under id: ${keywordExists._id}`}

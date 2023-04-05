@@ -13,6 +13,7 @@ export type Spot = {
     categories: Array<Types.ObjectId>
     tags: Array<Types.ObjectId>
     description: string
+    deletedAt?: Date
 }
 
 export type SpotRequest = {
