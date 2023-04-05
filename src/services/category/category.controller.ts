@@ -47,7 +47,7 @@ export class CategoryController {
 
     /* To delete a category is necessary just the ID any other parameter will throw an error*/
     @Delete(':id')
-    deleteCategory(@Param('id') id: string): Promise<Message>{
+    deleteCategory(@Param('id') id: string): Promise<Message | Category>{
         return this.CategoryService.deleteCategory(id)
     };
 

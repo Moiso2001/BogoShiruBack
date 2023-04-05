@@ -25,7 +25,7 @@ export class SpotService {
                 return keywordIsSpotName
             }
         
-            const keywordPassed = await this.keywordModel.findOne({name: spotRequest.keyword}).exec();
+            const keywordPassed = await this.keywordModel.findOne({name: spotRequest.keyword, deletedAt: null}).exec();
 
             if(!keywordPassed){
                 return {message: `Keyword with name: ${spotRequest.keyword} not found`}
