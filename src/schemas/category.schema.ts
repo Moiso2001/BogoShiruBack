@@ -10,5 +10,9 @@ export const categorySchema = new Schema({
     },
     keywords: {
         type: [mongoose.Types.ObjectId]
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
 }, { strict: 'throw' })
