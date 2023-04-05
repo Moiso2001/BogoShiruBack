@@ -1,10 +1,10 @@
-import { CategoryDto } from 'src/types/dto/category.dto';
 import { Category, Keyword, Message, Spot, Tag } from 'src/types';
 import { SpotDto, SpotRequestDto } from 'src/types/dto/spot.dto';
+import { CategoryDto } from 'src/types/dto/category.dto';
+import { TagDto } from 'src/types/dto/tag.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
-import { TagDto } from 'src/types/dto/tag.dto';
 
 @Injectable()
 export class SpotService {
@@ -52,7 +52,7 @@ export class SpotService {
 
     async getAll(): Promise<Message | Spot[]>{
         try {
-            const spots = await this.spotModel.find();
+            const spots = await this.spotModel.find({deletedAt: null}).exec();
 
             if(spots.length > 0){
                 return spots
@@ -66,7 +66,10 @@ export class SpotService {
 
     async getById(id: string): Promise<Message | Spot>{
         try {
-            const spot = await this.spotModel.findById(id);
+            const spot = await this.spotModel
+                .findById(id)
+                .where({deletedAt: null}) //Excluding all soft deleted documents
+                .exec();
 
             if(!spot){
                 return {message: `Spot with id: ${id} not found`}
@@ -80,7 +83,9 @@ export class SpotService {
 
     async getByName(name: string): Promise<Message | Spot>{
         try {
-            const spot = await this.spotModel.findOne({name});
+            const spot = await this.spotModel
+                .findOne({name, deletedAt: null}) //Excluding soft deleted documents
+                .exec();
 
             if(!spot){
                 return {message: `Spot with name: ${name} not found`}
@@ -95,7 +100,7 @@ export class SpotService {
     async createSpot(newSpot: SpotDto): Promise<Message>{
         try {
             // We validate if the spot name already exists on database
-            const spotExist = await this.spotModel.findOne({name: newSpot.name});
+            const spotExist = await this.spotModel.findOne({name: newSpot.name, deletedAt: null});
 
             if(spotExist){
                 return {message: `Spot with name: ${spotExist.name} already exist`}
@@ -113,7 +118,11 @@ export class SpotService {
 
     async updateSpot(id: string, newSpot: SpotDto): Promise<Message | Spot>{
         try {
-            const updatedSpot = await this.spotModel.findByIdAndUpdate(id, newSpot, {new: true});
+            const updatedSpot = await this.spotModel.findOneAndUpdate(
+                {_id: id, deletedAt: null}, 
+                newSpot, 
+                {new: true}
+            );
 
             if(!updatedSpot){
                 return {message: `Spot with id: ${id} not found`}
@@ -125,17 +134,24 @@ export class SpotService {
         }
     };
 
-    async deleteSpot(id: string): Promise<Message>{
+    async deleteSpot(id: string): Promise<Message | Spot>{
         try {
-            const deletedSpot = await this.spotModel.findByIdAndRemove(id)
+            //Soft delete implemented to avoid DB error queries on future
+            const deletedSpot = await this.spotModel
+                .findById(id,{ new: true })
+                .where({deletedAt: null})
+                .exec();
 
-            if (!deletedSpot) {
-                return { message: `Spot with id: ${id} not found` };
-            };
-          
-            return { message: `Spot with id: ${id} deleted successfully` };
+            if(!deletedSpot){
+                return {message: `Spot under id: ${id} not found`}
+            }
+
+            deletedSpot.deletedAt = new Date();
+            await deletedSpot.save();
+
+            return deletedSpot 
         } catch (error) {
-            return {message: 'An unexpected error appears', error};
+            return {message: 'An unexpected error occurred', error};
         }
     };
 
