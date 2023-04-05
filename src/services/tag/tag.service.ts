@@ -126,7 +126,7 @@ export class TagService {
     }
 
     /* Keywords relation with Tag */
-    async addKeywords(idTag: string, keywords: KeywordDto[]){
+    async addKeywords(idTag: string, keywords: KeywordDto[]): Promise<Message | Tag>{
         try {
             const tagToUpdate = await this.tagModel
                 .findById(idTag)
@@ -145,7 +145,7 @@ export class TagService {
             
               // Search the keyword and if it does not exist we will create it
               const result = await this.keywordModel.findOneAndUpdate(
-                { name: keyword.name.toLowerCase(), deletedAt: {$eq: null}}, // Case if the name already exists
+                { name: keyword.name.toLowerCase(), deletedAt: null}, // Case if the name already exists
                 { name: keyword.name.toLowerCase() }, // Case if the name doesn't exist and we create it here
                 { upsert: true, new: true }
               );
@@ -158,7 +158,21 @@ export class TagService {
         
             // Update the tag's keywords property with the new keyword IDs
             tagToUpdate.keywords = [...tagToUpdate.keywords, ...keywordIds];
-        
+
+            // Cleaning all keywords soft deleted (this function won't be reflected on the controller return, whatever on DB it was already updated)
+            tagToUpdate.keywords.forEach(async id => {
+                // Find each keyword by the id on the Tag.keywords
+                const keyword =  await this.keywordModel.findById(id) 
+                
+                // If the keyword propety is different than null is because has a date on it, and it was already soft deleted
+                if(keyword.deletedAt !== null){
+                    await this.tagModel.findOneAndUpdate(
+                        {_id: idTag, deletedAt: null},
+                        { $pull: { keywords: keyword._id }},    // Pull method will pull out the keyword by id from our Tag.keyword array 
+                    );
+                }
+            })
+
             // Save the updated tag to the database
             await tagToUpdate.save();  
             
