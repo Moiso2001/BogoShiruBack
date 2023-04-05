@@ -16,6 +16,7 @@ export class SpotService {
         @InjectModel('tag') private readonly tagModel: Model<Tag>,
     ){};
 
+    /* Principal Service - Principal request from the user will be handle here */
     async spotRequest(spotRequest: SpotRequestDto){
         try {
             // We'll handle few cases, the first one when the user will type a spot name on the keyword input.
@@ -50,6 +51,7 @@ export class SpotService {
         }
     }
 
+    /* Get options to search spots */
     async getAll(): Promise<Message | Spot[]>{
         try {
             const spots = await this.spotModel.find({deletedAt: null}).exec();
@@ -97,6 +99,7 @@ export class SpotService {
         }
     };
 
+    /* Post service */
     async createSpot(newSpot: SpotDto): Promise<Message>{
         try {
             // We validate if the spot name already exists on database
@@ -116,6 +119,7 @@ export class SpotService {
         }
     };
 
+    /* Basic update service */
     async updateSpot(id: string, newSpot: SpotDto): Promise<Message | Spot>{
         try {
             const updatedSpot = await this.spotModel.findOneAndUpdate(
@@ -134,6 +138,7 @@ export class SpotService {
         }
     };
 
+    /* Soft delete implementation */
     async deleteSpot(id: string): Promise<Message | Spot>{
         try {
             //Soft delete implemented to avoid DB error queries on future
@@ -155,9 +160,13 @@ export class SpotService {
         }
     };
 
+    /* Spot relation with category and tag, add are here */
     async addCategorySpot(spotId: string, categories: CategoryDto[]): Promise<Message | Spot>{
         try {
-            const spotToUpdate = await this.spotModel.findById(spotId);
+            const spotToUpdate = await this.spotModel
+                .findById(spotId)
+                .where({deletedAt: null})
+                .exec();
 
             // Validate if spotId exists
             if(!spotToUpdate){
@@ -171,7 +180,7 @@ export class SpotService {
             
               // Search the category and if it does not exist we will create it
               const result = await this.categoryModel.findOne(
-                { name: category.name.toLowerCase() }, // Case if the name already exists
+                { name: category.name.toLowerCase(), deletedAt: null }, // Case if the name already exists
                 { new: true }
               );
 
@@ -200,7 +209,10 @@ export class SpotService {
 
     async addTagSpot(spotId: string, tags: TagDto[]): Promise<Message | Spot>{
         try {
-            const spotToUpdate = await this.spotModel.findById(spotId);
+            const spotToUpdate = await this.spotModel
+                .findById(spotId)
+                .where({deletedAt: null})
+                .exec();
 
             // Validate if spotId exists
             if(!spotToUpdate){
@@ -214,13 +226,13 @@ export class SpotService {
             
               // Search the tag and if it does not exist we will create it
               const result = await this.tagModel.findOne(
-                { name: tag.name.toLowerCase() }, // Case if the name already exists
+                { name: tag.name.toLowerCase(), deletedAt: null}, // Case if the name already exists, also excluding all soft deleted documents
                 { new: true }
               );
 
               // In case some tag does not exist notify it
               if(!result){
-                return {message: `Tag with name: ${tag.name.toLowerCase()} not found`}
+                return {message: `Tag with name: ${result.name} not found`}
               }
 
               // We validate if the tag already exists in the spot to avoid adding duplicates or if the ObjectId reference is duplicated on the tags array
@@ -241,10 +253,11 @@ export class SpotService {
         }
     };
 
+    /* Spot relation with category and tag, delete are here */
     async deleteCategory(spotId: string, categoryName: string): Promise<Message | Spot>{
         try {
           // Search category by name and validate it in case the category name does not exist.
-          const categoryToDelete = await this.categoryModel.findOne({name: categoryName});
+          const categoryToDelete = await this.categoryModel.findOne({name: categoryName, deletedAt: null});
 
           if(!categoryToDelete){
             return {message: `Category with name ${categoryName} not found.`};
