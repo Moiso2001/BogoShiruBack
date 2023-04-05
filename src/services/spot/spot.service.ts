@@ -228,8 +228,8 @@ export class SpotService {
               const result = await this.tagModel.findOne(
                 { name: tag.name.toLowerCase(), deletedAt: null}, // Case if the name already exists, also excluding all soft deleted documents
                 { new: true }
-              );
-
+              );                        
+        
               // In case some tag does not exist notify it
               if(!result){
                 return {message: `Tag with name: ${result.name} not found`}
@@ -283,7 +283,7 @@ export class SpotService {
     async deleteTag(spotId: string, tagName: string): Promise<Message | Spot>{
         try {
           // Search tag by name and validate it in case the tag name does not exist.
-          const tagToDelete = await this.tagModel.findOne({name: tagName});
+          const tagToDelete = await this.tagModel.findOne({name: tagName, deletedAt: null});
 
           if(!tagToDelete){
             return {message: `Tag with name ${tagName} not found.`};
