@@ -16,7 +16,7 @@ export class CategoryService {
     /* We devided the services between type requests, initially the getAll which brings all categorie in DB */
     async getAll(): Promise<Category[] | Message> {
         try {
-            const categories = await this.categoryModel.find()
+            const categories = await this.categoryModel.find({deletedAt: null}).exec()
 
             if(categories.length > 0){
                 return categories
@@ -31,7 +31,10 @@ export class CategoryService {
     /* Looking by ID */
     async getCategoryById(id: string): Promise<Category | Message>{
         try {
-            const category = await this.categoryModel.findById(id);
+            const category = await this.categoryModel
+                .findById(id)
+                .where({deletedAt: null}) // Excludes soft deleted categories
+                .exec()
 
             if(category){
                 return category
@@ -46,7 +49,7 @@ export class CategoryService {
     /* Looking by name */
     async getCategoryByName(name: string): Promise<Category | Message>{
         try {
-            const category = await this.categoryModel.findOne({name});
+            const category = await this.categoryModel.findOne({name, deletedAt: null}).exec()
 
             if(category){
                 return category
@@ -80,7 +83,11 @@ export class CategoryService {
     /* Well... any further to say update and delete... just that :) */
     async updateCategory(id: string, category: CategoryDto): Promise<Category | Message>{
         try {
-            const updatedCategory = await this.categoryModel.findByIdAndUpdate(id, category, {new: true})
+            const updatedCategory = await this.categoryModel.findOneAndUpdate(
+                {_id: id, deletedAt: null}, // Excluding all soft deleted documents
+                category, 
+                {new: true}
+            );
             
             if(!updatedCategory){
                 return {message: `Categorie under id: ${id} doesn't exist`}
@@ -92,15 +99,22 @@ export class CategoryService {
         }
     };
     
-    async deleteCategory(id: string): Promise<Message>{
+    async deleteCategory(id: string): Promise<Message | Category>{
         try {
-            const deletedCategory = await this.categoryModel.findByIdAndDelete(id).exec();
+            //Soft delete implemented to avoid DB error queries on future
+            const deletedCategory = await this.categoryModel
+                .findById(id,{ new: true })
+                .where({deletedAt: null})
+                .exec();
 
             if(!deletedCategory){
-                return {message: `The category under id: ${id} does not exist`}
+                return {message: `Category under id: ${id} not found`}
             }
 
-            return {message: `The category under the id: ${deletedCategory._id} was deleted correctly`}
+            deletedCategory.deletedAt = new Date();
+            await deletedCategory.save();
+
+            return deletedCategory 
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
@@ -109,7 +123,10 @@ export class CategoryService {
     /* Keywords relation with Category */
     async addKeywords(idCategory: string, keywords: KeywordDto[]): Promise<Message | Category>{
         try {
-            const categoryToUpdate = await this.categoryModel.findById(idCategory);
+            const categoryToUpdate = await this.categoryModel
+                .findById(idCategory)
+                .where({deletedAt: null}) // Excluding all soft deleted documents
+                .exec()
 
             // Validate if idCategory exists
             if(!categoryToUpdate){
@@ -123,7 +140,7 @@ export class CategoryService {
             
               // Search the keyword and if it does not exist we will create it
               const result = await this.keywordModel.findOneAndUpdate(
-                { name: keyword.name.toLowerCase() }, // Case if the name already exists
+                { name: keyword.name.toLowerCase(), deletedAt: null }, // Case if the name already exists
                 { name: keyword.name.toLowerCase() }, // Case if the name doesn't exist and we create it here
                 { upsert: true, new: true }
               );
@@ -136,6 +153,20 @@ export class CategoryService {
         
             // Update the category's keywords property with the new keyword IDs
             categoryToUpdate.keywords = [...categoryToUpdate.keywords, ...keywordIds];
+
+            // Cleaning all keywords soft deleted (this function won't be reflected on the controller return, whatever on DB it was already updated)
+            categoryToUpdate.keywords.forEach(async id => {
+                // Find each keyword by the id on the Category.keywords
+                const keyword =  await this.keywordModel.findById(id) 
+                
+                // If the keyword propety is different than null is because has a date on it, and it was already soft deleted
+                if(keyword.deletedAt !== null){
+                    await this.categoryModel.findOneAndUpdate(
+                        {_id: idCategory, deletedAt: null},
+                        { $pull: { keywords: keyword._id }},    // Pull method will pull out the keyword by id from our Tag.keyword array 
+                    );
+                }
+            })
         
             // Save the updated category to the database
             await categoryToUpdate.save();  

@@ -41,7 +41,7 @@ export class TagController {
 
     /* Put to update the category with keywords passed by array of keyword object */
     @Put('keywords/:idTag')
-    addKeyword(@Param('idTag') id: string, @Body() keywords: KeywordDto[]){
+    addKeyword(@Param('idTag') id: string, @Body() keywords: KeywordDto[]): Promise<Message | Tag>{
         return this.TagService.addKeywords(id, keywords)
     };
 
