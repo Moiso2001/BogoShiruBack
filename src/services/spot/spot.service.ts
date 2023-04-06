@@ -10,9 +10,12 @@ export type Query = {
     categories: {
         $in: Types.ObjectId[]
     }
-    deletedAt: null
+    tags?: {
+        $in: Types.ObjectId[]
+    }
     location?: string
     cost?: number
+    deletedAt: null
 }
 
 @Injectable()
@@ -50,11 +53,20 @@ export class SpotService {
                 return {message: `Categories not found related with keyword: ${spotRequest.keyword}`}
             }
 
+            // Now search if the keyword also has a tag related with it, just to include it on the query
+            const tagRealatedKeyword = await this.tagModel.find({keywords: {$in: [keywordPassed._id]}, deletedAt: null}).exec();
+            const tagsId = tagRealatedKeyword.map(e => e._id);
+            
             /* This query will start as default with the categories array of id's and the deletedAt property  */
             const query: Query = {
                 categories: { $in: categoriesId },
                 deletedAt: null
             };
+
+            /* In case exists a Tag related with the keyword this will be added on the search of spot as parameter */
+            if(tagsId.length > 0){
+                query.tags = {$in : tagsId}
+            }
 
             /* In case of some location or budget is provided this will be added to the query */
             if(spotRequest.location) {
