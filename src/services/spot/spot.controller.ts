@@ -55,7 +55,7 @@ export class SpotController {
     deleteSpot(@Param('id') id: string): Promise<Message | Spot>{
         return this.SpotService.deleteSpot(id)
     };
-
+    
     @Delete('categories/:idSpot/:categoryName')
     deleteCategory(@Param('idSpot') idSpot: string, @Param('categoryName') categoryName: string): Promise<Message | Spot>{
         return this.SpotService.deleteCategory(idSpot, categoryName.toLowerCase())

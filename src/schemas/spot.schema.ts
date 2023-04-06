@@ -16,7 +16,11 @@ export const spotSchema = new Schema({
     },
     address: {
         type: String,
-        required: true
+        required: [true, 'Address is missing']
+    },
+    location: {
+        type: String,
+        required: [true, 'Location is missing']
     },
     pictures: [String],
     rating: {
@@ -24,10 +28,11 @@ export const spotSchema = new Schema({
         min: [1, 'Min number is 1'],
         max: [5, 'Max number is 5'],
     },
-    price: {
+    cost: {
         type: Number,
         min: [0, 'Min number is 1'],
         max: [5, 'Max number is 5'],
+        required: [true, 'Cost is missing']
     },
     description: {
         type: String,
