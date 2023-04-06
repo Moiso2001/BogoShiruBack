@@ -30,7 +30,7 @@ export class SpotService {
     ){};
 
     /* Principal Service - Principal request from the user will be handle here */
-    async spotRequest(spotRequest: SpotRequestDto){
+    async spotRequest(spotRequest: SpotRequestDto): Promise<Message | Spot[]>{
         try {
             //Validate if the keyword was provided
             if(!spotRequest.keyword){
