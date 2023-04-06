@@ -11,7 +11,10 @@ export class SpotController {
 
     @Get('request')
     spotRequest(@Body() spotRequest: SpotRequestDto){
-        const querie: SpotRequestDto = {...spotRequest, keyword: spotRequest.keyword.toLowerCase()}
+        const querie: SpotRequestDto = {
+            ...spotRequest, 
+            keyword: spotRequest.keyword && spotRequest.keyword.toLowerCase()
+        }
 
         return this.SpotService.spotRequest(querie)
     };
