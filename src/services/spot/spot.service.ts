@@ -6,6 +6,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 
+export type Query = {
+    categories: {
+        $in: Types.ObjectId[]
+    }
+    deletedAt: null
+    location?: string
+    cost?: number
+}
+
 @Injectable()
 export class SpotService {
 
@@ -26,23 +35,41 @@ export class SpotService {
                 return keywordIsSpotName
             }
         
+            // If we confirm that the keyword is not directly the spot, we will search that the keyword exists
             const keywordPassed = await this.keywordModel.findOne({name: spotRequest.keyword, deletedAt: null}).exec();
 
             if(!keywordPassed){
                 return {message: `Keyword with name: ${spotRequest.keyword} not found`}
             }   
 
-            const categoryRelatedKeyword = await this.categoryModel.find({keywords: {$in: [keywordPassed._id]}}).exec();
+            // Once confirmed keyword exists, we will search all categories related with the keyword
+            const categoryRelatedKeyword = await this.categoryModel.find({keywords: {$in: [keywordPassed._id]}, deletedAt: null}).exec();
             const categoriesId = categoryRelatedKeyword.map(e => e._id);
 
             if(categoriesId.length === 0){
                 return {message: `Categories not found related with keyword: ${spotRequest.keyword}`}
             }
 
-            const spotsRelatedCategory = await this.spotModel.find({categories: {$in: categoriesId}});
+            /* This query will start as default with the categories array of id's and the deletedAt property  */
+            const query: Query = {
+                categories: { $in: categoriesId },
+                deletedAt: null
+            };
+
+            /* In case of some location or budget is provided this will be added to the query */
+            if(spotRequest.location) {
+                query.location = spotRequest.location
+            }
+            
+            if(spotRequest.budget){
+                query.cost = spotRequest.budget
+            }
+
+            /* Searching the spot looking by the categories related, budget if was passed, cost if was passed */
+            const spotsRelatedCategory = await this.spotModel.find(query).exec();
 
             if(spotsRelatedCategory.length === 0){
-                return {message: `Spots not found related with keyword: ${spotRequest.keyword}`}
+                return {message: `Spots not found related with the request: ${spotRequest.keyword} - location: ${spotRequest.location ? spotRequest.location : 'All location'} - cost: ${spotRequest.budget ? spotRequest.budget : 'No budget'}`}
             }
 
             return spotsRelatedCategory
