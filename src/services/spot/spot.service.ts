@@ -4,8 +4,9 @@ import { CategoryDto } from 'src/types/dto/category.dto';
 import { TagDto } from 'src/types/dto/tag.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
+import { capitalize } from '../controller';
 import { Model, Types } from 'mongoose';
-
+//
 export type Query = {
     categories: {
         $in: Types.ObjectId[]
@@ -29,10 +30,15 @@ export class SpotService {
     ){};
 
     /* Principal Service - Principal request from the user will be handle here */
-    async spotRequest(spotRequest: SpotRequestDto){
+    async spotRequest(spotRequest: SpotRequestDto): Promise<Message | Spot[]>{
         try {
+            //Validate if the keyword was provided
+            if(!spotRequest.keyword){
+                return {message: "Keyword is missing"}
+            }
+
             // We'll handle few cases, the first one when the user will type a spot name on the keyword input.
-            const keywordIsSpotName: Spot | Spot[] = await this.spotModel.find({name: spotRequest.keyword, deletedAt: null}).exec();
+            const keywordIsSpotName: Spot | Spot[] = await this.spotModel.find({name: capitalize(spotRequest.keyword), deletedAt: null}).exec();
             
             if(keywordIsSpotName.length > 0){
                 return keywordIsSpotName
@@ -65,7 +71,7 @@ export class SpotService {
 
             /* In case exists a Tag related with the keyword this will be added on the search of spot as parameter */
             if(tagsId.length > 0){
-                query.tags = {$in : tagsId}
+                query.tags = { $in : tagsId }
             }
 
             /* In case of some location or budget is provided this will be added to the query */
