@@ -4,9 +4,9 @@ import { CategoryDto } from 'src/types/dto/category.dto';
 import { TagDto } from 'src/types/dto/tag.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { Model, Types } from 'mongoose';
 import { capitalize } from '../controller';
-
+import { Model, Types } from 'mongoose';
+//
 export type Query = {
     categories: {
         $in: Types.ObjectId[]
@@ -30,7 +30,7 @@ export class SpotService {
     ){};
 
     /* Principal Service - Principal request from the user will be handle here */
-    async spotRequest(spotRequest: SpotRequestDto){
+    async spotRequest(spotRequest: SpotRequestDto): Promise<Message | Spot[]>{
         try {
             //Validate if the keyword was provided
             if(!spotRequest.keyword){
