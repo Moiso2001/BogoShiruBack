@@ -29,7 +29,7 @@ export class TagController {
 
     /* Create a new tag, receive it by Body */
     @Post()
-    createTag(@Body() newTag: TagDto): Promise<Message>{
+    createTag(@Body() newTag: TagDto): Promise<Tag |Message>{
         return this.TagService.createTag(newTag.name ? {...newTag, name: newTag.name.toLowerCase()} : newTag) // Avoiding type error by undefined on .toLowerCase
     };
 

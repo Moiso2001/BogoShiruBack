@@ -29,7 +29,7 @@ export class CategoryController {
 
     /* Create a new categorie, receive it by Body */
     @Post()
-    createCategory(@Body() newCategorie: CategoryDto): Promise<Message>{
+    createCategory(@Body() newCategorie: CategoryDto): Promise<Category |Message>{
         return this.CategoryService.createCategory({...newCategorie, name: newCategorie.name.toLowerCase()})
     };
 

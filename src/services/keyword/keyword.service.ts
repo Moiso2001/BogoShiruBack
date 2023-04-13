@@ -61,7 +61,7 @@ export class KeywordService {
     };
 
     /* Used to post a keyword */
-    async createKeyword(keyword: KeywordDto): Promise<Message>{
+    async createKeyword(keyword: KeywordDto): Promise<Keyword | Message>{
         try {
             const keywordExists = await this.keywordModel.findOne(keyword).where({deletedAt: null}).exec()
 
@@ -72,7 +72,7 @@ export class KeywordService {
             const newKeyword = new this.keywordModel(keyword)
             await newKeyword.save()
 
-            return {message: `Keyword with name ${newKeyword.name} was created under id: ${newKeyword._id}`}
+            return newKeyword;
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }

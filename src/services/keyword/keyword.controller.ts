@@ -25,7 +25,7 @@ export class KeywordController {
     };
 
     @Post()
-    createKeyword(@Body() newKeyword: KeywordDto): Promise<Message>{
+    createKeyword(@Body() newKeyword: KeywordDto): Promise<Keyword | Message>{
         return this.KeywordService.createKeyword(newKeyword.name ? {...newKeyword, name: newKeyword.name.toLowerCase()}: newKeyword) // We validate if name exist to avoid Type error undefined if name is not passed at lowercase method
     };
 

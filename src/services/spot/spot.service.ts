@@ -145,7 +145,7 @@ export class SpotService {
     };
 
     /* Post service */
-    async createSpot(newSpot: SpotDto): Promise<Message>{
+    async createSpot(newSpot: SpotDto): Promise<Spot | Message>{
         try {
             // We validate if the spot name already exists on database
             const spotExist = await this.spotModel.findOne({name: newSpot.name, deletedAt: null});
@@ -155,10 +155,9 @@ export class SpotService {
             };
 
             const spot = new this.spotModel(newSpot);
-            
             await spot.save()
 
-            return {message: `Spot with name: ${spot.name} was created under id: ${spot._id}`}
+            return spot
         } catch (error) {
             return {message: 'An unexpected error appears', error};
         }

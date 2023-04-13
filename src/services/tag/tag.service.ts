@@ -66,7 +66,7 @@ export class TagService {
     }; 
 
     /* Used to post a Tag */
-    async createTag (tag: TagDto): Promise<Message>{
+    async createTag (tag: TagDto): Promise<Tag | Message>{
         try {
             // We validate if the category name already exists on 
             const tagExist = await this.tagModel.findOne({name: tag.name, deletedAt: null});
@@ -78,7 +78,7 @@ export class TagService {
             const newTag = new this.tagModel(tag)
             await newTag.save()
 
-            return {message: `Tag with name ${newTag.name} was created under id: ${newTag._id}`}
+            return newTag;
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
