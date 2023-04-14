@@ -6,8 +6,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { capitalize } from '../controller';
 import { Model, Types } from 'mongoose';
-//
-export type Query = {
+
+type Query = {
     categories: {
         $in: Types.ObjectId[]
     }
@@ -38,7 +38,7 @@ export class SpotService {
             }
 
             // We'll handle few cases, the first one when the user will type a spot name on the keyword input.
-            const keywordIsSpotName: Spot | Spot[] = await this.spotModel.find({name: capitalize(spotRequest.keyword), deletedAt: null}).exec();
+            const keywordIsSpotName: Spot[] = await this.spotModel.find({name: capitalize(spotRequest.keyword), deletedAt: null}).exec();
             
             if(keywordIsSpotName.length > 0){
                 return keywordIsSpotName
@@ -145,7 +145,7 @@ export class SpotService {
     };
 
     /* Post service */
-    async createSpot(newSpot: SpotDto): Promise<Message>{
+    async createSpot(newSpot: SpotDto): Promise<Spot | Message>{
         try {
             // We validate if the spot name already exists on database
             const spotExist = await this.spotModel.findOne({name: newSpot.name, deletedAt: null});
@@ -155,10 +155,9 @@ export class SpotService {
             };
 
             const spot = new this.spotModel(newSpot);
-            
             await spot.save()
 
-            return {message: `Spot with name: ${spot.name} was created under id: ${spot._id}`}
+            return spot
         } catch (error) {
             return {message: 'An unexpected error appears', error};
         }

@@ -62,7 +62,7 @@ export class CategoryService {
     };
 
     /* Used to post a category */
-    async createCategory(category: CategoryDto): Promise<Message>{
+    async createCategory(category: CategoryDto): Promise<Message | Category>{
         try {
             // We validate if the category name already exists on 
             const categoryExist = await this.categoryModel.findOne({name: category.name, deletedAt: null});
@@ -74,7 +74,7 @@ export class CategoryService {
             const newCategory = new this.categoryModel(category)
             await newCategory.save()
 
-            return {message: `Category with name: ${newCategory.name} was created under id: ${newCategory._id}`}
+            return newCategory;
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }

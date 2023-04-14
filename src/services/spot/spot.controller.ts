@@ -35,7 +35,7 @@ export class SpotController {
     };
 
     @Post()
-    createPost(@Body() newSpot: SpotDto): Promise<Message>{
+    createPost(@Body() newSpot: SpotDto): Promise<Message | Spot>{
         return this.SpotService.createSpot(newSpot)
     };
 
