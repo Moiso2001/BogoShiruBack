@@ -6,8 +6,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { capitalize } from '../controller';
 import { Model, Types } from 'mongoose';
-//
-export type Query = {
+
+type Query = {
     categories: {
         $in: Types.ObjectId[]
     }
@@ -38,7 +38,7 @@ export class SpotService {
             }
 
             // We'll handle few cases, the first one when the user will type a spot name on the keyword input.
-            const keywordIsSpotName: Spot | Spot[] = await this.spotModel.find({name: capitalize(spotRequest.keyword), deletedAt: null}).exec();
+            const keywordIsSpotName: Spot[] = await this.spotModel.find({name: capitalize(spotRequest.keyword), deletedAt: null}).exec();
             
             if(keywordIsSpotName.length > 0){
                 return keywordIsSpotName

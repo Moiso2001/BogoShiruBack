@@ -13,7 +13,8 @@ import { keywordSchema } from 'src/schemas/keyword.schema';
     {name: 'category', schema: categorySchema},
     {name: 'keyword', schema: keywordSchema},
     {name: 'spot', schema: spotSchema},
-    {name: 'tag', schema: tagSchema}
+    {name: 'tag', schema: tagSchema},
+    {name: 'category', schema: categorySchema}
   ])],
   providers: [SpotService],
   controllers: [SpotController]
