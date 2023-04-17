@@ -7,3 +7,9 @@ export class PlanDto {
     spots: string[]
     rating: number
 }
+
+export class PlanRequestDto {
+    keyword: string
+    budget?: number
+    location?: string
+}
