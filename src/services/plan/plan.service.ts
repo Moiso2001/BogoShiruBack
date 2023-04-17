@@ -58,7 +58,7 @@ export class PlanService {
         }
     };
 
-    async getAll(){
+    async getAll(): Promise<Plan[] | Message>{
         try {
             const plans = await this.planModel.find({deletedAt: null}).exec();// Excluding soft deleted documents
 
@@ -72,7 +72,7 @@ export class PlanService {
         }
     };
 
-    async getById(idPlan: string){
+    async getById(idPlan: string): Promise<Plan | Message> {
         try {
             const plan = await this.planModel
                 .findById(idPlan)
@@ -89,7 +89,7 @@ export class PlanService {
         }
     };
 
-    async getByName(namePlan: string){
+    async getByName(namePlan: string): Promise<Plan | Message> {
         try {
             const plan = await this.planModel.findOne({name: namePlan, deletedAt: null}).exec(); // Excluding soft deleted documents
 
@@ -103,7 +103,7 @@ export class PlanService {
         }
     };
 
-    async createPlan(newPlan: PlanDto){
+    async createPlan(newPlan: PlanDto): Promise<Plan | Message> {
         try {
             const planExisted = await this.planModel.findOne({name: newPlan.name, deletedAt: null}).exec(); // Excluding soft deleted documents
 
@@ -126,7 +126,7 @@ export class PlanService {
         }
     };
 
-    async updatePlan(idPlan: string, newPlan: PlanDto){
+    async updatePlan(idPlan: string, newPlan: PlanDto): Promise<Plan | Message> {
         try {
             const updatedPlan = await this.planModel.findByIdAndUpdate(
                 idPlan, 
@@ -145,7 +145,7 @@ export class PlanService {
         }
     };
 
-    async addSpotsToPlan(idPlan: string, spots: Array<Types.ObjectId>){
+    async addSpotsToPlan(idPlan: string, spots: Array<Types.ObjectId>) : Promise<Plan | Message> {
         try {
             //We search the plan by id to be sure first that the plan exists
             const planToUpdate = await this.planModel
@@ -193,7 +193,7 @@ export class PlanService {
         }
     }
 
-    async deletePlan(idPlan){
+    async deletePlan(idPlan): Promise<Plan | Message> {
         try {
             //Soft delete implemented to avoid DB error queries on future
             const deletedPlan = await this.planModel
