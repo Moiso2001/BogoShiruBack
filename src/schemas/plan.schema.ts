@@ -7,6 +7,7 @@ export const planSchema = new Schema({
     },
     cost: {
         type: Number,
+        required: [true, 'Cost required']
     },
     location: {
         type: String,
@@ -14,12 +15,14 @@ export const planSchema = new Schema({
     },
     spots: {
         type: [mongoose.Types.ObjectId]
-        // required: [true, 'Categories are missing'] ??
     },
     rating: {
         type: Number,
         min: [1, 'Min number is 1'],
         max: [5, 'Max number is 5'],
+    },
+    pictures: {
+        type: [String]
     },
     deletedAt: {
         type: Date,
