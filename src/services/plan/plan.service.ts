@@ -15,6 +15,7 @@ type Query = {
 @Injectable()
 export class PlanService {
 
+    
     constructor(
         @InjectModel('plan') private readonly planModel: Model<Plan>,
         @InjectModel('spot') private readonly spotModel: Model<Spot>
