@@ -193,7 +193,7 @@ export class PlanService {
         }
     }
 
-    async deletePlan(idPlan): Promise<Plan | Message> {
+    async deletePlan(idPlan: string): Promise<Plan | Message> {
         try {
             //Soft delete implemented to avoid DB error queries on future
             const deletedPlan = await this.planModel
