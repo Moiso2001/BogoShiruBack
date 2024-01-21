@@ -4,6 +4,7 @@ export type spotContactInfo = {
 }
 
 export type spotSchedule = {
+    Lun: string
     Mar: string
     Mie: string
     Jue: string
