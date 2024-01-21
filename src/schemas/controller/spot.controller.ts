@@ -14,5 +14,7 @@ export const spotContactInfoValidator = (v: spotContactInfo) => {
 }
 
 export const scheduleValidator = (schedule: spotSchedule) => {
+    if(Object.values(schedule).length !== 8 ) return false;
+
     return Object.values(schedule).every(day => !!day) // Validate if all days are not false or "" empty strings.
 }
