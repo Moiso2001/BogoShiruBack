@@ -44,7 +44,7 @@ export class SpotService {
                 return keywordIsSpotName
             }
         
-            // If we confirm that the keyword is not directly the spot, we will search that the keyword exists
+            // If we confirm that the keyword is not a spot, we will search that the keyword exists
             const keywordPassed = await this.keywordModel.findOne({name: spotRequest.keyword, deletedAt: null}).exec();
 
             if(!keywordPassed){

@@ -3,12 +3,23 @@ export type spotContactInfo = {
     email?: string
 }
 
+export type spotSchedule = {
+    Mar: string
+    Mie: string
+    Jue: string
+    Vie: string
+    Sab: string
+    Dom: string
+    Fes: string
+}
+
 export type Spot = {
     name: string
     contact_info: spotContactInfo
     address: string
     location: string
     pictures: string[]
+    schedule: spotSchedule
     rating: Number
     cost: Number
     categories: Array<Types.ObjectId>

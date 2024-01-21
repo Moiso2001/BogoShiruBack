@@ -1,4 +1,4 @@
-import { spotContactInfo } from "src/types";
+import { spotContactInfo, spotSchedule } from "src/types";
 
 export const spotContactInfoValidator = (v: spotContactInfo) => {
 
@@ -11,4 +11,8 @@ export const spotContactInfoValidator = (v: spotContactInfo) => {
 
     /* We just want to confirm that almost one of the validations are true. We don't want to save a contact_info object with properties that are not phone or email */
     return emailValidated || phoneValidated
+}
+
+export const scheduleValidator = (schedule: spotSchedule) => {
+    return Object.values(schedule).every(day => !!day) // Validate if all days are not false or "" empty strings.
 }

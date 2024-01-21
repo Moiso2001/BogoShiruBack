@@ -9,7 +9,7 @@ import { Message, Spot } from 'src/types';
 export class SpotController {
     constructor(private readonly SpotService: SpotService){}
 
-    @Get('request')
+    @Post('request')
     spotRequest(@Body() spotRequest: SpotRequestDto): Promise<Message | Spot[]>{
         const querie: SpotRequestDto = {
             ...spotRequest, 
@@ -18,6 +18,7 @@ export class SpotController {
 
         return this.SpotService.spotRequest(querie)
     };
+    
 
     @Get()
     getAll() : Promise<Message | Spot[]>{

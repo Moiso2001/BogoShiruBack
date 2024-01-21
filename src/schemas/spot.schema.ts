@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { spotContactInfoValidator } from "./controller/spot.controller";
+import { spotContactInfoValidator, scheduleValidator } from "./controller/spot.controller";
 
 
 export const spotSchema = new Schema({
@@ -11,7 +11,8 @@ export const spotSchema = new Schema({
         type: Object,
         required: [true, 'Contact info is missing'],
         validate: {
-            validator: spotContactInfoValidator
+            validator: spotContactInfoValidator,
+            message: "Incorrect email syntax"
         }
     },
     address: {
@@ -22,6 +23,14 @@ export const spotSchema = new Schema({
         type: String,
         required: [true, 'Location is missing']
     },
+    schedule: {
+        type: Object,
+        required: [true, 'Schedule is missing'],
+        validate: {
+            validator: scheduleValidator,
+            message: "No empty strings allowed"
+        }
+    },
     pictures: [String],
     rating: {
         type: Number,
@@ -30,7 +39,7 @@ export const spotSchema = new Schema({
     },
     cost: {
         type: Number,
-        min: [0, 'Min number is 1'],
+        min: [0, 'Min number is 0'],
         max: [5, 'Max number is 5'],
         required: [true, 'Cost is missing']
     },
