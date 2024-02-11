@@ -154,6 +154,8 @@ export class SpotService {
                 return {message: `Spot with name: ${spotExist.name} already exist`}
             };
 
+            newSpot.pictures[0]
+
             const spot = new this.spotModel(newSpot);
             await spot.save()
 
