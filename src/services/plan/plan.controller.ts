@@ -9,7 +9,7 @@ export class PlanController {
 
     constructor(private readonly PlanService: PlanService){}
 
-    @Get('request')
+    @Post('request')
     planRequest(@Body() planRequest: PlanRequestDto): Promise <Plan[] | Message>{
         const querie: PlanRequestDto = {
             ...planRequest, 
