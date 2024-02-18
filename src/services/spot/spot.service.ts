@@ -30,8 +30,13 @@ export class SpotService {
     ){};
 
     /* Principal Service - Principal request from the user will be handle here */
-    async spotRequest(spotRequest: SpotRequestDto): Promise<Message | Spot[]>{
+    async spotRequest(spotRequest: SpotRequestDto, limit: string, page: string): Promise<Message | Spot[]>{
         try {
+            /* Pagination constants */
+            const numberLimit = Number(limit) || 50
+            const currentPage = Number(page) || 1
+            const skip = numberLimit * (currentPage - 1)
+
             //Validate if the keyword was provided
             if(!spotRequest.keyword){
                 return {message: "Keyword is missing"}
@@ -84,7 +89,10 @@ export class SpotService {
             }
 
             /* Searching the spot looking by the categories related, budget if was passed, cost if was passed */
-            const spotsRelatedCategory = await this.spotModel.find(query).exec();
+            const spotsRelatedCategory = await this.spotModel.find(query)
+                                                             .limit(numberLimit)
+                                                             .skip(skip)
+                                                             .exec();
 
             if(spotsRelatedCategory.length === 0){
                 return {message: `Spots not found related with the request: ${spotRequest.keyword} - location: ${spotRequest.location ? spotRequest.location : 'All location'} - cost: ${spotRequest.budget ? spotRequest.budget : 'No budget'}`}

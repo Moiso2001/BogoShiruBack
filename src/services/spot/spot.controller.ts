@@ -10,13 +10,13 @@ export class SpotController {
     constructor(private readonly SpotService: SpotService){}
 
     @Post('request')
-    spotRequest(@Body() spotRequest: SpotRequestDto): Promise<Message | Spot[]>{
+    spotRequest(@Body() spotRequest: SpotRequestDto, @Query('page') page: string, @Query('limit') limit: string): Promise<Message | Spot[]>{
         const querie: SpotRequestDto = {
             ...spotRequest, 
             keyword: spotRequest.keyword && spotRequest.keyword.toLowerCase()
-        }
+        };
 
-        return this.SpotService.spotRequest(querie)
+        return this.SpotService.spotRequest(querie, page, limit);
     };
     
     @Get()
