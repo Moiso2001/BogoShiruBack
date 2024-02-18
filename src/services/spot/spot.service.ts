@@ -30,7 +30,7 @@ export class SpotService {
     ){};
 
     /* Principal Service - Principal request from the user will be handle here */
-    async spotRequest(spotRequest: SpotRequestDto, limit: string, page: string): Promise<Message | Spot[]>{
+    async spotRequest(spotRequest: SpotRequestDto, page: string, limit: string): Promise<Message | Spot[]>{
         try {
             /* Pagination constants */
             const numberLimit = Number(limit) || 50
@@ -97,7 +97,7 @@ export class SpotService {
             if(spotsRelatedCategory.length === 0){
                 return {message: `Spots not found related with the request: ${spotRequest.keyword} - location: ${spotRequest.location ? spotRequest.location : 'All location'} - cost: ${spotRequest.budget ? spotRequest.budget : 'No budget'}`}
             }
-
+ 
             return spotsRelatedCategory
         } catch (error) {
             return {message: 'An unexpected error appears', error}
