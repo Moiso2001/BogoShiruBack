@@ -35,6 +35,11 @@ export class SpotController {
         return this.SpotService.getByName(name)
     };
 
+    @Get(':page/:limit')
+    getSpotByPagination(@Param('page') page: string, @Param('limit') limit: string){
+        
+    }
+
     @Post()
     createPost(@Body() newSpot: SpotDto): Promise<Message | Spot>{
         return this.SpotService.createSpot(newSpot)

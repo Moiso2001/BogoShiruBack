@@ -105,7 +105,7 @@ export class SpotService {
                 return spots
             }
 
-            return {message: 'Spots not found'}
+            return {message: 'There are no spots saved on database'}
         } catch (error) {
             return {message: 'An unexpected error appears', error}
         }
@@ -143,6 +143,21 @@ export class SpotService {
             return {message: 'An unexpected error appears', error}
         }
     };
+
+    /* Pagination */
+    async getPagination(page: string, limit: string){
+        try {
+            const spotsWithLimit = await this.spotModel.find({deletedAt: null}).limit(2).exec();
+
+            if(spotsWithLimit.length < 1){
+                return {message: 'There are no spots saved on database'}
+            }
+
+            return spotsWithLimit
+        } catch (error) {
+            return {message: 'An unexpected error appears', error}
+        }
+    }
 
     /* Post service */
     async createSpot(newSpot: SpotDto): Promise<Spot | Message>{
