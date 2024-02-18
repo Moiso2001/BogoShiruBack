@@ -1,6 +1,6 @@
-import { Controller, Get, Put, Post, Delete, Param, Body } from '@nestjs/common';
-import { CategoryDto } from 'src/types/dto/category.dto';
+import { Controller, Get, Put, Post, Delete, Param, Body, Query } from '@nestjs/common';
 import { SpotDto, SpotRequestDto } from 'src/types/dto/spot.dto';
+import { CategoryDto } from 'src/types/dto/category.dto';
 import { TagDto } from 'src/types/dto/tag.dto';
 import { SpotService } from './spot.service';
 import { Message, Spot } from 'src/types';
@@ -19,7 +19,6 @@ export class SpotController {
         return this.SpotService.spotRequest(querie)
     };
     
-
     @Get()
     getAll() : Promise<Message | Spot[]>{
         return this.SpotService.getAll()
@@ -35,9 +34,9 @@ export class SpotController {
         return this.SpotService.getByName(name)
     };
 
-    @Get(':page/:limit')
-    getSpotByPagination(@Param('page') page: string, @Param('limit') limit: string){
-        
+    @Get('pagination')
+    getSpotByPagination(@Query('page') page: string, @Query('limit') limit: string){
+        return this.SpotService.getPagination(page, limit);
     }
 
     @Post()

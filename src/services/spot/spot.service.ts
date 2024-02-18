@@ -147,10 +147,17 @@ export class SpotService {
     /* Pagination */
     async getPagination(page: string, limit: string){
         try {
-            const spotsWithLimit = await this.spotModel.find({deletedAt: null}).limit(2).exec();
+            const numberLimit = Number(limit) || 50
+            const currentPage = Number(page) || 1
+            const skip = numberLimit * (currentPage - 1)
+
+            const spotsWithLimit = await this.spotModel.find({deletedAt: null})
+                                                       .limit(numberLimit)
+                                                       .skip(skip) 
+                                                       .exec();
 
             if(spotsWithLimit.length < 1){
-                return {message: 'There are no spots saved on database'}
+                return {message: 'No spots found with that query'}
             }
 
             return spotsWithLimit
